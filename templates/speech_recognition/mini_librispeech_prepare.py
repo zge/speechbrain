@@ -185,3 +185,7 @@ def download_mini_librispeech(destination):
     shutil.unpack_archive(train_archive, destination)
     shutil.unpack_archive(valid_archive, destination)
     shutil.unpack_archive(test_archive, destination)
+
+if __name__ == '__main__':
+    data_folder = '/data6/Dataset_Mini_Librispeech'
+    prepare_mini_librispeech(data_folder, 'train.json', 'valid.json', 'test.json')
