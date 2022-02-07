@@ -7,13 +7,13 @@
 
 
 # Set up folders for reading from and writing to
-data_folder: ../data
-output_folder: ./save
+data_folder: ../data/mini_librispeech
+output_folder: ./save_mini-librispeech
 
 # Path where data-specification files are stored
-train_annotation: ../filelists/train.json
-valid_annotation: ../filelists/valid.json
-test_annotation: ../filelists/test.json
+train_annotation: ../filelists/mini-librispeech/train.json
+valid_annotation: ../filelists/mini-librispeech/valid.json
+test_annotation: ../filelists/mini-librispeech/test.json
 
 # Tokenizer parameters
 token_type: unigram  # ["unigram", "bpe", "char"]

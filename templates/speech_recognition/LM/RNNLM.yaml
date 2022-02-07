@@ -7,7 +7,7 @@
 # Seed needs to be set at top of yaml, before objects with parameters are made
 seed: 2602
 __set_seed: !apply:torch.manual_seed [!ref <seed>]
-output_folder: !ref results/RNNLM/
+output_folder: !ref results/RNNLM_mini-librispeech/
 save_folder: !ref <output_folder>/save
 train_log: !ref <output_folder>/train_log.txt
 
@@ -19,16 +19,16 @@ train_log: !ref <output_folder>/train_log.txt
 # 4- Set lm_{train,valid,test}_data with the local path.
 # Reading data from the local disk of the compute node (e.g. $SLURM_TMPDIR with SLURM-based clusters) is very important.
 # It allows you to read the data much faster without slowing down the shared filesystem.
-lm_train_data: data/train.txt
-lm_valid_data: data/valid.txt
-lm_test_data: data/test.txt
+lm_train_data: data/mini-librispeech/train.txt
+lm_valid_data: data/mini-librispeech/valid.txt
+lm_test_data: data/mini-librispeech/test.txt
 
 # The train logger writes training statistics to a file, as well as stdout.
 train_logger: !new:speechbrain.utils.train_logger.FileTrainLogger
     save_file: !ref <train_log>
 
 # Tokenizer model (you must use the same tokenizer for LM and ASR training)
-tokenizer_file: ../Tokenizer/save/1000_unigram.model
+tokenizer_file: ../Tokenizer/save_mini-librispeech/1000_unigram.model
 
 # Training parameters
 number_of_epochs: 20
