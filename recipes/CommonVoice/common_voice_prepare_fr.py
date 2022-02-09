@@ -380,12 +380,15 @@ def strip_accents(text):
     return str(text)
 
 from recipes.CommonVoice.common_voice_prepare import prepare_common_voice
-data_folder = 'data/cv-corpus-6.1-2020-12-11/fr'
-save_folder = 'exp/cv-corpus-6.1-2020-12-11'
-train_tsv_file = 'data/cv-corpus-6.1-2020-12-11/fr/train.tsv'
-dev_tsv_file = 'data/cv-corpus-6.1-2020-12-11/fr/dev.tsv'
-test_tsv_file = 'data/cv-corpus-6.1-2020-12-11/fr/test.tsv'
-accented_letters = False
+dataclass = 'CommonVoice'
+dataset = 'cv-corpus-6.1-2020-12-11'
+language = 'fr'
+data_folder = 'data/{}/{}/{}'.format(dataclass, dataset, language)
+save_folder = 'exp/{}/{}'.format(dataclass, dataset)
+train_tsv_file = 'data/{}/{}/{}/train.tsv'.format(dataclass, dataset, language)
+dev_tsv_file = 'data/{}/{}/{}/dev.tsv'.format(dataclass, dataset, language)
+test_tsv_file = 'data/{}/{}/{}/test.tsv'.format(dataclass, dataset, language)
+accented_letters = True
 duration_threshold = 10
 
 prepare_common_voice( \

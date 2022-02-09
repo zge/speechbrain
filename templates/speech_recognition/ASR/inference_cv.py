@@ -16,11 +16,12 @@ from speechbrain.utils.edit_distance import wer_details_by_utterance
 
 # os.chdir('templates/speech_recognition/ASR')
 
+dataclass = 'CommonVoice'
 dataset = 'cv-corpus-6.1-2020-12-11'
-listfile = '../filelists/{}/test.csv'.format(dataset)
+listfile = '../filelists/{}/{}/test.csv'.format(dataclass, dataset)
 assert os.path.isfile(listfile), '{} does not exist!'.format(listfile)
-data_root = '../data/{}/fr/clips'.format(dataset)
-data_resampled = '../data/{}/fr/resampled'.format(dataset)
+data_root = '../data/{}/{}/fr/clips'.format(dataclass, dataset)
+data_resampled = '../data/{}/{}/fr/resampled'.format(dataclass, dataset)
 data_output = 'data'
 dur_lim = [5, 10] # select audio files with duration between 5 and 10 secs.
 seed = 1234
@@ -53,8 +54,8 @@ def batch_docode(audio_files):
 
     return predicted_words, predicted_tokens
 
-def tuple2csv(tuples, csvname='filename.csv', colname=[], verbose=True):
-    with open(csvname, 'w', newline='') as f:
+def tuple2csv(tuples, csvname='filename.csv', colname=[], encoding='utf-8', verbose=True):
+    with open(csvname, 'w', newline='', encoding=encoding) as f:
         csv_out = csv.writer(f)
         if len(colname) != 0:
             header = colname
@@ -208,7 +209,7 @@ for i in range(len(batches)):
         uttid = uttid_dur_pairs_sorted[i*batch_size+j][0]
         audio_file = json_dict_sel[uttid]['wav'].replace(data_root, data_resampled)
         audio_file2 = os.path.join(data_output, os.path.basename(audio_file))
-        # copyfile(audio_file, audio_file2)
+        copyfile(audio_file, audio_file2)
         details = [detail_dict[uttid]['num_edits'],
                    detail_dict[uttid]['num_ref_tokens'],
                    detail_dict[uttid]['WER'],
