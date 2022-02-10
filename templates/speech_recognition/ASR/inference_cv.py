@@ -176,10 +176,10 @@ for i in range(0, num_sel, batch_size):
 
     # get transcription texts
     transcriptions = [json_dict_sel[uttid]['words'].upper() \
-                      for uttid,dur in uttid_dur_pairs_sorted[i:i+batch_size]]
+                      for uttid,dur in uttid_dur_pairs_sorted[i:idx_end]]
 
     # get transcription tokens
-    refs = [asr_model.tokenizer.encode_as_ids(transcriptions[i]) for i in range(batch_size)]
+    refs = [asr_model.tokenizer.encode_as_ids(transcriptions[i]) for i in range(len(transcriptions))]
 
     # get predicted tokens
     hyps = predicted_tokens
