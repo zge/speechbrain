@@ -25,19 +25,25 @@ data_resampled = '../data/{}/{}/fr/resampled'.format(dataclass, dataset)
 data_output = 'data'
 dur_lim = [5, 10] # select audio files with duration between 5 and 10 secs.
 seed = 1234
-num_sel = 100
+num_sel = 100 # 100 for subset or 15659 for whole set
 sr = 16000
-batch_size = 10
+batch_size = 10 # 10 for subset or 1000 for whole set
 
 # make the dir for resampled audio files
 os.makedirs(data_resampled, exist_ok=True)
 os.makedirs(data_output, exist_ok=True)
 
 from speechbrain.pretrained import EncoderDecoderASR
+if torch.cuda.is_available():
+    print('using GPU ...')
+    device = 'cuda'
+else:
+    print('using CPU ...')
+    device = 'cpu'
 asr_model = EncoderDecoderASR.from_hparams(
     source="speechbrain/asr-crdnn-commonvoice-fr",
     savedir="pretrained_models/asr-crdnn-commonvoice-fr",
-    run_opts={"device":"cpu"})
+    run_opts={"device":device})
 
 def batch_docode(audio_files):
     # find the signals and the corresponding lengths
@@ -155,13 +161,15 @@ batches = []
 ref_dict, hyp_dict = {}, {}
 for i in range(0, num_sel, batch_size):
 
-    print('decoding file {} - {} ...'.format(i, i+batch_size))
+    idx_end = min(num_sel, i + batch_size)
+    print('decoding file {} - {} (total {}) ...'.format(i, idx_end, num_sel))
 
     # get audio files in a batch
+
     audio_files = [json_dict_sel[uttid]['wav'].replace(data_root, data_resampled) \
-                   for uttid,dur in uttid_dur_pairs_sorted[i:i+batch_size]]
+                   for uttid,dur in uttid_dur_pairs_sorted[i:idx_end]]
     # audio_files = [json_dict_sel[uttid]['wav'] \
-    #                for uttid,dur in uttid_dur_pairs_sorted[i:i+batch_size]]
+    #                for uttid,dur in uttid_dur_pairs_sorted[i:idx_end]]
 
     # batch decode
     predicted_words, predicted_tokens = batch_docode(audio_files)
