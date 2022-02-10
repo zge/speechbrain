@@ -23,9 +23,9 @@ assert os.path.isfile(listfile), '{} does not exist!'.format(listfile)
 data_root = '../data/{}/{}/fr/clips'.format(dataclass, dataset)
 data_resampled = '../data/{}/{}/fr/resampled'.format(dataclass, dataset)
 data_output = 'data'
-dur_lim = [5, 10] # select audio files with duration between 5 and 10 secs.
+dur_lim = [0, float('inf')] # [5,10], or [0, float('inf')]
 seed = 1234
-num_sel = 100 # 100 for subset or 15659 for whole set
+num_sel = 15659 # 100 for subset or 15659 for whole set
 sr = 16000
 batch_size = 10 # 10 for subset or 1000 for whole set
 
@@ -121,6 +121,7 @@ for entry in dict_list:
 # # check the wav paths
 wavs = [json_dict[k]['wav'] for k in json_dict.keys()]
 # wavs = [entry['wav'] for entry in dict_list]
+print('#wavs: {}'.format(len(wavs)))
 
 # # check the duration distribution
 # import matplotlib.pyplot as plt
@@ -135,11 +136,14 @@ for k in json_dict.keys():
     if dur >= dur_lim[0] and dur <= dur_lim[1]:
         json_dict_sel[k] = json_dict[k]
 
-# randomly select a subset of utterance IDs for inference
+# check utterance ids
 uttids = sorted(json_dict_sel.keys())
+print('#utterances within [{}, {}]: {}'.format(*dur_lim, len(uttids)))
+
+# randomly select a subset of utterance IDs for inference
 random.seed(seed)
 random.shuffle(uttids)
-uttids_sel = sorted(uttids[:num_sel])
+uttids_sel = sorted(uttids[:min(num_sel,len(uttids))])
 
 # sort utterance IDs based on their corresponding utterance length
 durs_sel = [json_dict[uttid]['length'] for uttid in uttids_sel]
