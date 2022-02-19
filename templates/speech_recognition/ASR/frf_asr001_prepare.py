@@ -24,6 +24,7 @@ def prepare_frf_asr001(
 
     wav_list = sorted(get_all_files(data_folder, match_and=[".wav"]))
     trans_list = sorted(get_all_files(data_folder, match_and=[".txt"]))
+    trans_list = [f for f in trans_list if '_orig' not in f]
     assert len(wav_list) == len(trans_list), "audio and text does not match!"
 
     # randomize wav list
@@ -43,10 +44,16 @@ def prepare_frf_asr001(
     wav_list_valid = sorted(wav_list[int(nwavs*percent['train']):int(nwavs*(percent['train']+percent['valid']))])
     wav_list_test = sorted(wav_list[int(nwavs*(percent['train']+percent['valid'])):])
 
-    # Create the json files
+    # Create the json files 3 sets
     create_json(wav_list_train, save_json_train)
     create_json(wav_list_valid, save_json_valid)
     create_json(wav_list_test, save_json_test)
+
+    # create the json file for all sets together
+    save_json_all = save_json_train.replace('train', 'all')
+    wav_list_all = sorted(wav_list_train + wav_list_valid + wav_list_test)
+    create_json(wav_list_all, save_json_all)
+
 
 def create_json(wav_list, json_file):
 
@@ -83,5 +90,8 @@ def create_json(wav_list, json_file):
 
 if __name__ == '__main__':
     data_folder = '{}/data/ots_french/FRF_ASR001/Processed/'.format(Path.home())
-    save_json_train, save_json_valid, save_json_test = 'train.json', 'valid.json', 'test.json'
+    list_folder = '../filelists/ots_french/frf_asr001'
+    save_json_train = os.path.join(list_folder, 'train.json')
+    save_json_valid = os.path.join(list_folder, 'valid.json')
+    save_json_test = os.path.join(list_folder, 'test.json')
     prepare_frf_asr001(data_folder, save_json_train, save_json_valid, save_json_test)

@@ -263,8 +263,10 @@ def create_csv(
 
         if language == "fr":
             # Replace J'y D'hui etc by J_ D_hui
-            words = words.replace("'", " ")
-            words = words.replace("’", " ")
+            # updated to match the French ASR tokenizer - zge
+            # words = words.replace("'", " ")
+            # words = words.replace("’", " ")
+            words = words.replace("’", "'")
 
         elif language == "ar":
             HAMZA = "\u0621"

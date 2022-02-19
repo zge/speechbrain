@@ -17,7 +17,7 @@ from speechbrain.utils.edit_distance import wer_details_by_utterance
 
 # os.chdir('templates/speech_recognition/ASR')
 
-listfile = '../filelists/frf_asr001/all.json'
+listfile = '../filelists/ots_french/frf_asr001/all.json'
 assert os.path.isfile(listfile), '{} does not exist!'.format(listfile)
 data_root = '../data/ots_french/FRF_ASR001/Processed'
 data_resampled = '../data/ots_french/FRF_ASR001/Resampled'
@@ -33,10 +33,16 @@ os.makedirs(data_resampled, exist_ok=True)
 os.makedirs(data_output, exist_ok=True)
 
 from speechbrain.pretrained import EncoderDecoderASR
+if torch.cuda.is_available():
+    print('using GPU ...')
+    device = 'cuda'
+else:
+    print('using CPU ...')
+    device = 'cpu'
 asr_model = EncoderDecoderASR.from_hparams(
     source="speechbrain/asr-crdnn-commonvoice-fr",
     savedir="pretrained_models/asr-crdnn-commonvoice-fr",
-    run_opts={"device":"cpu"})
+    run_opts={"device":device})
 
 def batch_docode(audio_files):
     # find the signals and the corresponding lengths

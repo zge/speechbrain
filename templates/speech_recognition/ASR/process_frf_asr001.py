@@ -5,6 +5,7 @@
 
 import os
 import glob
+import csv
 from pathlib import Path
 
 from tools.audio import audioread, audiowrite
@@ -16,7 +17,7 @@ def remove_bracket(text):
     flag = True # copy or skip
     text2 = ''
 
-    # loop over to copy or skip characters
+    # loop over to copy or skip characters inside '<>'
     i = 0
     while i < n:
         if flag:
@@ -29,6 +30,7 @@ def remove_bracket(text):
                 flag = True
         i += 1
 
+    # remove '(())'
     text2 = text2.replace('(())','')
 
     # remove redundant spaces
@@ -53,10 +55,23 @@ def extract_segment(textfile):
         start = float(lines[i].rstrip()[1:-1])
         text = lines[i+1].rstrip()
         text2 = remove_bracket(text)
+        for letter in letters:
+            text2 = text2.replace(letter, ' ')
         end = float(lines[i+2].rstrip()[1:-1])
-        segments.append((start, end, text2))
+        segments.append((start, end, text, text2))
 
     return segments
+
+def tuple2csv(tuples, csvname='filename.csv', colname=[], encoding='utf-8', verbose=True):
+    with open(csvname, 'w', newline='', encoding=encoding) as f:
+        csv_out = csv.writer(f)
+        if len(colname) != 0:
+            header = colname
+            csv_out.writerow(header)
+        for i, tpl in enumerate(tuples):
+            csv_out.writerow(list(tpl))
+    if verbose:
+        print('{} saved!'.format(csvname))
 
 in_dir = "{}/Data/ots_french/FRF_ASR001/Audio".format(Path.home())
 out_dir = "{}/Data/ots_french/FRF_ASR001/Processed".format(Path.home())
@@ -67,6 +82,9 @@ naudiofiles = len(audiofiles)
 print('{} of audio files in {}'.format(naudiofiles, in_dir))
 
 nwords_min = 3 # min # of words for a valid segment
+dur_max = 10 # max duration for utterance (longer utterance is not good for alignment)
+# letters = ["_", "-", "'"]
+letters = ["_", "-"] # decide not to replace "'" with space
 
 for i, audiofile in enumerate(audiofiles):
 
@@ -82,21 +100,25 @@ for i, audiofile in enumerate(audiofiles):
 
     # get segments
     textfile = audiofile.replace('Audio', 'Transcription').replace('.wav', '.txt')
+    assert os.path.isfile(textfile), '{} does not exist!'
     segments = extract_segment(textfile)
     nsegments = len(segments)
     print('{} segments in {}'.format(nsegments, audiofile))
 
     cnt = 0
-    outpaths, txtpaths = [], []
+    outpaths, txtpaths, txtpaths2 = [], [], []
     for j, segment in enumerate(segments):
-        text = segment[2]
-        nwords = len(text.split())
+        text, text2 = segment[2:]
+        nwords = len(text2.split())
+        starttime = segment[0]
+        duration = segment[1] - segment[0]
 
-        if nwords > nwords_min:
+        cond1 = nwords > nwords_min
+        cond2 = duration <= dur_max
+        cond3 = '*' not in text2
+        if cond1 and cond2 and cond3:
 
             # read in audio segment
-            starttime = segment[0]
-            duration = segment[1] - segment[0]
             data, params = audioread(audiofile, starttime, duration)
 
             # write out audio segment
@@ -105,11 +127,32 @@ for i, audiofile in enumerate(audiofiles):
             audiowrite(outpath, data, params)
             outpaths.append(outpath)
 
-            # write out text file for the segment
-            txtfile = outfile.replace('.wav', '.txt')
+            # write out the original text for the segment (as backup)
+            txtfile = outfile.replace('.wav', '_orig.txt')
             txtpath = os.path.join(calldir, txtfile)
             open(txtpath, 'w').writelines(text)
             txtpaths.append(txtpath)
 
+            # write out processed text for the segment
+            txtfile2 = outfile.replace('.wav', '.txt')
+            txtpath2 = os.path.join(calldir, txtfile2)
+            open(txtpath2, 'w').writelines(text2.upper())
+            txtpaths2.append(txtpath2)
+
             # increment counter
             cnt += 1
+
+# write out original and processed texts in csv for comparison
+txtpaths = glob.glob(os.path.join(out_dir, '**', '*_orig.txt'), recursive=True)
+txtpaths2 = glob.glob(os.path.join(out_dir, '**', '*.txt'), recursive=True)
+txtpaths2 = [path for path in txtpaths2 if '_orig' not in path]
+assert len(txtpaths) == len(txtpaths2), '# of original & processed texts not match!'
+tuple_list = []
+for path in txtpaths:
+    path2 = path.replace('_orig', '')
+    text = open(path, 'r').readlines()[0].rstrip()
+    text2 = open(path2, 'r').readlines()[0].rstrip()
+    uttid = os.path.splitext(os.path.basename(path2))[0]
+    tuple_list.append((uttid, text, text2))
+header = ['uttid', 'original text', 'processed text']
+tuple2csv(tuple_list, 'text_comp.csv', header)

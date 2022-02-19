@@ -19,13 +19,15 @@ from speechbrain.utils.edit_distance import wer_details_by_utterance
 dataclass = 'CommonVoice'
 dataset = 'cv-corpus-6.1-2020-12-11'
 listfile = '../filelists/{}/{}/test.csv'.format(dataclass, dataset)
+# listfile = '../../../recipes/CommonVoice/exp/{}/{}/test_with_prime.csv'.format(dataclass, dataset)
+# listfile = '../../../recipes/CommonVoice/exp/{}/{}/test_without_prime.csv'.format(dataclass, dataset)
 assert os.path.isfile(listfile), '{} does not exist!'.format(listfile)
 data_root = '../data/{}/{}/fr/clips'.format(dataclass, dataset)
 data_resampled = '../data/{}/{}/fr/resampled'.format(dataclass, dataset)
 data_output = 'data'
 dur_lim = [0, float('inf')] # [5,10], or [0, float('inf')]
 seed = 1234
-num_sel = 15659 # 100 for subset or 15659 for whole set
+num_sel = 100 # 100 for subset or 15659 for whole set
 sr = 16000
 batch_size = 10 # 10 for subset or 1000 for whole set
 
