@@ -146,6 +146,7 @@ print('#utterances within [{}, {}]: {}'.format(*dur_lim, len(uttids)))
 random.seed(seed)
 random.shuffle(uttids)
 uttids_sel = sorted(uttids[:min(num_sel,len(uttids))])
+num_sel = len(uttids_sel) # updated num_sel
 
 # sort utterance IDs based on their corresponding utterance length
 durs_sel = [json_dict[uttid]['length'] for uttid in uttids_sel]
