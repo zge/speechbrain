@@ -137,8 +137,9 @@ def create_csv(wav_list, csv_file):
 
 
 if __name__ == '__main__':
-    data_folder = '{}/data/ots_french/FRF_ASR001/Processed/'.format(Path.home())
+    data_folder = '{}/Data/ots_french/FRF_ASR001/Processed/'.format(Path.home())
     list_folder = '../filelists/ots_french/frf_asr001'
+    os.makedirs(list_folder, exist_ok=True)
     ext = 'csv'
     save_train = os.path.join(list_folder, 'train.{}'.format(ext))
     save_valid = os.path.join(list_folder, 'valid.{}'.format(ext))

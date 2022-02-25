@@ -246,8 +246,8 @@ def dataio_prepare(hparams, tokenizer):
         "tokens_list", "tokens_bos", "tokens_eos", "tokens"
     )
     def text_pipeline(wrd):
-        tokens_list = tokenizer.sp.encode_as_ids(wrd)
-        # tokens_list = tokenizer.encode_as_ids(wrd)
+        # tokens_list = tokenizer.sp.encode_as_ids(wrd)
+        tokens_list = tokenizer.encode_as_ids(wrd)
         yield tokens_list
         tokens_bos = torch.LongTensor([hparams["bos_index"]] + (tokens_list))
         yield tokens_bos
@@ -273,7 +273,7 @@ if __name__ == "__main__":
 
     # Load hyperparameters file with command-line overrides
     # hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
-    argvs = ['ASR/seq2seq/hparams/train_fr_exp.yml', '--batch_size=1', '--device=cpu']
+    argvs = ['ASR/seq2seq/hparams/train_fr_exp_cv.yml', '--batch_size=1', '--device=cpu']
     hparams_file, run_opts, overrides = sb.parse_arguments(argvs)
 
     with open(hparams_file) as fin:
@@ -308,9 +308,9 @@ if __name__ == "__main__":
     #     },
     # )
 
-    # Added in for using pre-trained model - zge
-    run_on_main(hparams["pretrainer"].collect_files)
-    hparams["pretrainer"].load_collected(device=run_opts["device"])
+    # # Added in for using pre-trained model - zge
+    # run_on_main(hparams["pretrainer"].collect_files)
+    # hparams["pretrainer"].load_collected(device=run_opts["device"])
 
     # Defining tokenizer and loading it
     tokenizer = SentencePiece(
@@ -322,14 +322,7 @@ if __name__ == "__main__":
         character_coverage=hparams["character_coverage"],
     )
 
-    tokenizer.sp = hparams['tokenizer']
-
-    # vocab_size = tokenizer.sp.vocab_size()
-    # tuple_list = []
-    # for i in range(vocab_size):
-    #     token = tokenizer.sp.decode_ids([i])
-    #     tuple_list.append([i, token])
-
+    # tokenizer = hparams['tokenizer']
 
     # Create the datasets objects as well as tokenization and encoding :-D
     train_data, valid_data, test_data = dataio_prepare(hparams, tokenizer)

@@ -143,8 +143,8 @@ for i, audiofile in enumerate(audiofiles):
             cnt += 1
 
 # write out original and processed texts in csv for comparison
-txtpaths = glob.glob(os.path.join(out_dir, '**', '*_orig.txt'), recursive=True)
-txtpaths2 = glob.glob(os.path.join(out_dir, '**', '*.txt'), recursive=True)
+txtpaths = sorted(glob.glob(os.path.join(out_dir, '**', '*_orig.txt'), recursive=True))
+txtpaths2 = sorted(glob.glob(os.path.join(out_dir, '**', '*.txt'), recursive=True))
 txtpaths2 = [path for path in txtpaths2 if '_orig' not in path]
 assert len(txtpaths) == len(txtpaths2), '# of original & processed texts not match!'
 tuple_list = []
