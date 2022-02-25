@@ -17,16 +17,19 @@ save_folder: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth/save
 train_log: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth/train_log.txt
 
 # Data files
-data_folder: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr/
-                           # e.g, /localscratch/cv-corpus-5.1-2020-06-22/fr
-train_tsv_file: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr//train.tsv # Standard CommonVoice .tsv files
-dev_tsv_file: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr//dev.tsv # Standard CommonVoice .tsv files
-test_tsv_file: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr//test.tsv # Standard CommonVoice .tsv files
+#data_folder: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr/
+data_folder: data/ots_french/FRF_ASR001/Resampled
+#train_tsv_file: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr/train.tsv # Standard CommonVoice .tsv files
+#dev_tsv_file: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr/dev.tsv # Standard CommonVoice .tsv files
+#test_tsv_file: data/CommonVoice/cv-corpus-6.1-2020-12-11/fr/test.tsv # Standard CommonVoice .tsv files
 accented_letters: true
 language: fr # use 'it' for Italian, 'rw' for Kinyarwanda, 'en' for english
-train_csv: exp/CommonVoice/cv-corpus-6.1-2020-12-11/train.csv
-valid_csv: exp/CommonVoice/cv-corpus-6.1-2020-12-11/dev.csv
-test_csv: exp/CommonVoice/cv-corpus-6.1-2020-12-11/test.csv
+#train_csv: exp/CommonVoice/cv-corpus-6.1-2020-12-11/train.csv
+#valid_csv: exp/CommonVoice/cv-corpus-6.1-2020-12-11/dev.csv
+#test_csv: exp/CommonVoice/cv-corpus-6.1-2020-12-11/test.csv
+train_csv: ../../templates/speech_recognition/filelists/ots_french/frf_asr001/train.csv
+valid_csv: ../../templates/speech_recognition/filelists/ots_french/frf_asr001/valid.csv
+test_csv: ../../templates/speech_recognition/filelists/ots_french/frf_asr001/test.csv
 skip_prep: true # Skip data preparation
 
 # We remove utterance slonger than 10s in the train/dev/test sets as
@@ -43,12 +46,12 @@ sorting: ascending
 # With data_parallel batch_size is split into N jobs
 # With DDP batch_size is multiplied by N jobs
 # Must be 6 per GPU to fit 16GB of VRAM
-batch_size: 12
+batch_size: 1 # 12
 test_batch_size: 8
 
 dataloader_options:
-  batch_size: 12
-  num_workers: 6
+  batch_size: 1 # 12
+  num_workers: 0 # 6
 test_dataloader_options:
   batch_size: 8
   num_workers: 6
@@ -180,6 +183,9 @@ ctc_cost: !name:speechbrain.nnet.losses.ctc_loss
 seq_cost: !name:speechbrain.nnet.losses.nll_loss
   label_smoothing: 0
 
+# Tokenizer initialization
+tokenizer: !new:sentencepiece.SentencePieceProcessor
+
 modules:
   enc: *id003
   emb: *id004
@@ -228,3 +234,17 @@ error_rate_computer: !name:speechbrain.utils.metric_stats.ErrorRateStats
 
 cer_computer: !name:speechbrain.utils.metric_stats.ErrorRateStats
   split_tokens: true
+
+pretrained_path: speechbrain/asr-crdnn-commonvoice-fr
+
+# This object is used to pretrain the language model and the tokenizers
+# (defined above). In this case, we also pretrain the ASR model (to make
+# sure the model converges on a small amount of data)
+pretrainer: !new:speechbrain.utils.parameter_transfer.Pretrainer
+    collect_in: !ref <save_folder>
+    loadables:
+        tokenizer: !ref <tokenizer>
+        model: !ref <model>
+    paths:
+        tokenizer: !ref <pretrained_path>/tokenizer.ckpt
+        model: !ref <pretrained_path>/asr.ckpt

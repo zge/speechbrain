@@ -246,7 +246,8 @@ def dataio_prepare(hparams, tokenizer):
         "tokens_list", "tokens_bos", "tokens_eos", "tokens"
     )
     def text_pipeline(wrd):
-        tokens_list = tokenizer.sp.encode_as_ids(wrd)
+        # tokens_list = tokenizer.sp.encode_as_ids(wrd)
+        tokens_list = tokenizer.encode_as_ids(wrd)
         yield tokens_list
         tokens_bos = torch.LongTensor([hparams["bos_index"]] + (tokens_list))
         yield tokens_bos
@@ -307,15 +308,21 @@ if __name__ == "__main__":
     #     },
     # )
 
-    # Defining tokenizer and loading it
-    tokenizer = SentencePiece(
-        model_dir=hparams["save_folder"],
-        vocab_size=hparams["output_neurons"],
-        annotation_train=hparams["train_csv"],
-        annotation_read="wrd",
-        model_type=hparams["token_type"],
-        character_coverage=hparams["character_coverage"],
-    )
+    # Added in for using pre-trained model - zge
+    run_on_main(hparams["pretrainer"].collect_files)
+    hparams["pretrainer"].load_collected(device=run_opts["device"])
+
+    # # Defining tokenizer and loading it
+    # tokenizer = SentencePiece(
+    #     model_dir=hparams["save_folder"],
+    #     vocab_size=hparams["output_neurons"],
+    #     annotation_train=hparams["train_csv"],
+    #     annotation_read="wrd",
+    #     model_type=hparams["token_type"],
+    #     character_coverage=hparams["character_coverage"],
+    # )
+
+    tokenizer = hparams['tokenizer']
 
     # Create the datasets objects as well as tokenization and encoding :-D
     train_data, valid_data, test_data = dataio_prepare(hparams, tokenizer)
@@ -329,8 +336,8 @@ if __name__ == "__main__":
         checkpointer=hparams["checkpointer"],
     )
 
-    # Adding objects to trainer.
-    asr_brain.tokenizer = tokenizer
+    # # Adding objects to trainer.
+    # asr_brain.tokenizer = tokenizer
 
     # Training
     asr_brain.fit(
