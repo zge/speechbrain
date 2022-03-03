@@ -8,18 +8,18 @@ Zhenhao Ge, 2022-01-26
 
 import os
 
-# example 1 (read text from json files)
-cats = ['train', 'valid', 'test']
-flist_dir = 'templates/speech_recognition/filelists/ots_french/frf_asr001'
-text_dir = 'templates/speech_recognition/LM/data/frf_asr001'
-filetype = 'json'
+# # example 1 (read text from json files)
+# cats = ['train', 'valid', 'test']
+# flist_dir = 'templates/speech_recognition/filelists/ots_french/frf_asr001'
+# text_dir = 'templates/speech_recognition/LM/data/frf_asr001'
+# filetype = 'json'
 
-# # example 2 (read text from csv files)
-# cats = ['train', 'dev', 'test']
-# flist_dir = 'templates/speech_recognition/filelists/CommonVoice/cv-corpus-6.1-2020-12-11'
-# text_dir = 'templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11'
-# os.makedirs(text_dir, exist_ok=True)
-# filetype = 'csv'
+# example 2 (read text from csv files)
+cats = ['train', 'dev', 'test']
+flist_dir = 'templates/speech_recognition/filelists/CommonVoice/cv-corpus-6.1-2020-12-11'
+text_dir = 'templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11'
+os.makedirs(text_dir, exist_ok=True)
+filetype = 'csv'
 
 def convert_symbol(text, l1, l2, quote='"'):
   """convert symbol l1 to l2 if inside quote"""
@@ -89,3 +89,9 @@ with open(outfile, 'w') as outf:
         with open(infile, 'r') as inf:
             outf.write(inf.read())
 print('wrote to {}'.format(outfile))
+
+# sanity check: find the alphabet size in outfile
+lines = open(outfile, 'r').readlines()
+single_line = ' '.join([line.rstrip() for line in lines])
+letters = sorted(set(single_line.replace(' ', '')))
+assert len(letters) == 74, "# of letters should be 74!"

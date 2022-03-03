@@ -49,7 +49,7 @@ elif filetype == 'csv':
 idx_word = len(keys) - 1 # index of the words are always the last index
 
 # get letter lists
-# letters = ["*", "_", "-", "'"] # these letters have been removed or converted
+# letters = ["*", "_", "-"] # these letters have been removed or converted
 if filetype == 'json':
     words = [json_dict[k]['words'] for k in json_dict.keys()]
 elif filetype == 'csv':
@@ -57,6 +57,7 @@ elif filetype == 'csv':
 words = [word.rstrip() for word in words]
 text = ' '.join(words)
 letters = sorted(set(text.replace(' ', '')))
+print('#letters: {}'.format(len(letters)))
 
 # write out sub tuple list containing the letters as csv files
 for i, letter in enumerate(letters):

@@ -26,8 +26,8 @@ import os
 import csv
 import shutil
 
-def get_text(csv_file):
-    lines = open(os.path.join(data_dir, csv_file), 'r').readlines()
+def get_text(csv_path):
+    lines = open(csv_path, 'r').readlines()
     lines = lines[1:]
     texts = [line.split(',')[-1].rstrip() for line in lines]
     return texts
@@ -116,7 +116,8 @@ for csv_file in csv_files:
 texts_all = []
 csv_files = ['train.csv', 'dev.csv', 'test.csv']
 for csv_file in csv_files:
-    texts = get_text(csv_file)
+    csv_path = os.path.join(data_dir, csv_file)
+    texts = get_text(csv_path)
     texts_all += texts
 
 # check current alphabet
@@ -124,6 +125,7 @@ single_line = ' '.join(texts_all)
 characters = single_line.replace(' ', '')
 ncharacters = len(characters)
 char_dict = get_char_dict(characters)
+print('#letters in {} in dir {}: {}'.format(csv_files, data_dir, len(char_dict)))
 
 # find the indices of accent letters (now there is no accent letters)
 letters = sorted(set(characters))

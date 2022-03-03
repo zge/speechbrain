@@ -42,21 +42,29 @@ dataset = 'cv-corpus-6.1-2020-12-11'
 filetype = 'csv'
 letter_file = '../templates/speech_recognition/LM/data/{}/chars.{}'.format(dataset, filetype)
 assert os.path.isfile(letter_file), '{} does not exist!'.format(letter_file)
+print('letter file: {}'.format(letter_file))
 filelist_dir = '../templates/speech_recognition/filelists/CommonVoice/cv-corpus-6.1-2020-12-11'
 sublist_files = sorted(glob.glob(os.path.join(filelist_dir, 'subset_by_letter', '*.{}'.format(filetype))))
+print('# of sublist files: {}'.format(len(sublist_files)))
+
 idx_range = [58,62]
 sublist_files_sel = sublist_files[idx_range[0]:idx_range[1]]
-print('\n'.join([os.path.basename(f) for f in sublist_files_sel]))
+print('selected sublist files:')
+print('\n'.join([' - {}'.format(os.path.basename(f)) for f in sublist_files_sel]))
 
+# get accented letters
 lines = open(letter_file, 'r').readlines()
 lines = lines[1:]
 tuple_list = [line.rstrip().split('\t') for line in lines]
 letters = [entry[1] for entry in tuple_list]
-letters_accent = letters[idx_range[0]:idx_range[1]]
+nletters = len(letters)
+print('# of letters: {}'.format(nletters))
+assert nletters == 78, "the accented letters have been converted"
 
 # show the accented letters with their indices
 print([(i, letter) for i, letter in enumerate(letters)][idx_range[0]:idx_range[1]])
 
+letters_accent = letters[idx_range[0]:idx_range[1]]
 for i,f in enumerate(sublist_files_sel):
     tuple_list = []
     print('processing {} with letter {} (index {}) ...'.format(

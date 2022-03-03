@@ -7,6 +7,8 @@ Zhenhao Ge, 2022-02-18
 
 import os, sys
 from pathlib import Path
+import glob
+from shutil import copyfile
 
 sys.path.append(os.getcwd())
 from utils import csv2dict
@@ -35,6 +37,57 @@ def find_sel(csv_file, letters):
     dur_sel = sum(durations_sel)
 
     return nutters, cnt, dur_total, dur_sel
+
+def convert_symbol(text, l1, l2, quote='"'):
+  """convert symbol l1 to l2 if inside quote"""
+  text2 = ''
+  inside = False
+  for c in text:
+    if c == quote:
+      inside = not inside
+    elif c == l1:
+      if inside:
+        text2 += l2
+      else:
+        text2 += l1
+    else:
+       text2 += c
+  return text2
+
+def csv2dict(csvname, delimiter=',', encoding='utf-8'):
+  """extract rows in csv file to a dictionary list"""
+  lines = open(csvname, 'r', encoding=encoding).readlines()
+  header = lines[0].rstrip().split(delimiter)
+  lines = lines[1:]
+  nlines = len(lines)
+
+  dict_list = [{} for _ in range(nlines)]
+  for i, line in enumerate(lines):
+    line2 = convert_symbol(line.rstrip(), delimiter, '|')
+    items = line2.split(delimiter)
+    items = [s.replace('|', delimiter) for s in items]
+    dict_list[i] = {k:items[j] for j,k in enumerate(header)}
+
+  return dict_list
+
+def read_text(annotation_file, filetype):
+
+    if filetype == 'json':
+
+        import json
+        # read text from json file
+        with open(annotation_file, 'r') as f:
+            json_dict = json.load(f)
+        lines = [json_dict[key]['words'] for key in json_dict.keys()]
+
+    elif filetype == 'csv':
+
+        import csv
+        # read text from csv file
+        dict_list = csv2dict(annotation_file)
+        lines = [d['wrd'] for d in dict_list]
+
+    return lines
 
 dataset = 'cv-corpus-6.1-2020-12-11'
 result_folder = '20220202_ASR-Fr-Pretrained'
@@ -75,9 +128,25 @@ print('#letters in asr but not in CV: {}'.format(len(letters_asr_not_cv)))
 letters_cv_not_asr = [l for l in letters_cv if l not in letters_asr]
 print('#letters in cv but not in asr: {}'.format(len(letters_cv_not_asr)))
 
-# find out the total duration of utterances contains letters_cv_not_ots
+# sub-task 1: find out the total duration of utterances with uncommon letters (letters_cv_not_ots)
 for cat in ['train', 'dev', 'test']:
     csv_file = '../recipes/CommonVoice/exp/CommonVoice/{}/{}.csv'.format(dataset, cat)
     nutters, nutters_sel, dur, dur_sel = find_sel(csv_file, letters_cv_not_ots)
     print('{}/{} utterances ({:.3f} hr. /{:.3f} hr.) in {} with uncommon letters'.format(
         nutters_sel, nutters, dur_sel/3600, dur/3600, os.path.basename(csv_file)))
+
+# sub-task 2: backup utterance subsets for all uncommon letters (letters_cv_not_ots)
+filelist_dir = '../templates/speech_recognition/filelists/CommonVoice/{}/subset_by_letter'.format(
+    dataset)
+assert os.path.isdir(filelist_dir), 'dir: {} does not exist!'.format(filelist_dir)
+filelists = sorted(glob.glob(os.path.join(filelist_dir, '*.csv')))
+filelist_uncommon_dir = os.path.join(filelist_dir, 'uncommon')
+os.makedirs(filelist_uncommon_dir, exist_ok=True)
+for i, letter in enumerate(letters_cv):
+    if letter not in letters_ots:
+        fromfile = filelists[i]
+        tofile0 = os.path.join(filelist_uncommon_dir, os.path.basename(fromfile))
+        copyfile(fromfile, tofile0)
+        tofile1 = tofile0.replace('.csv', '.txt')
+        lines = read_text(fromfile, 'csv')
+        open(tofile1, 'w').writelines('\n'.join(lines))
