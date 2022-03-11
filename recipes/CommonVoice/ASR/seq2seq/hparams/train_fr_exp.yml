@@ -51,10 +51,10 @@ test_batch_size: 8
 
 dataloader_options:
   batch_size: 1 # 12
-  num_workers: 0 # 6
+  num_workers: 1 # 6
 test_dataloader_options:
   batch_size: 1 # 8
-  num_workers: 0 # 6
+  num_workers: 1 # 6
 
 # BPE parameters
 token_type: unigram  # ["unigram", "bpe", "char"]

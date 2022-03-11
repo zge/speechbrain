@@ -26,7 +26,7 @@ dur_lim = [5, 10] # select audio files with duration between 5 and 10 secs.
 seed = 1234
 num_sel = 100
 sr = 16000
-batch_size = 10
+batch_size = 2
 
 # make the dir for resampled audio files
 os.makedirs(data_resampled, exist_ok=True)
@@ -43,6 +43,11 @@ asr_model = EncoderDecoderASR.from_hparams(
     source="speechbrain/asr-crdnn-commonvoice-fr",
     savedir="pretrained_models/asr-crdnn-commonvoice-fr",
     run_opts={"device":device})
+#asr_model = EncoderDecoderASR.from_hparams(
+#    source="../../../recipes/CommonVoice/results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth/save/CKPT+2022-02-25+17-27-11+00",
+#    savedir="pretrained_models/asr-crdnn-commonvoice-fr-ots",
+#    run_opts={"device":device})
+
 
 def batch_docode(audio_files):
     # find the signals and the corresponding lengths
