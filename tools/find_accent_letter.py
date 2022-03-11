@@ -13,24 +13,25 @@
 # replaced by their corresponding single letter
 #
 # Mapping rules learned
-#  - for letters[58] (`)
-#     + (letters[0] + letters[58], letters[26]) # accented A
-#     + (letters[4] + letters[58], letters[34]) # accented E
-#     + (letters[20] + letters[58], letters[50]) # accented U
-#  - for letters[59] ('́)
-#     + (letters[14] + letters[59], letters[45]) # accented O
-#     + (letters[4] + letters[59], letters[35]) # accented E
-#  - for letters[60] (^)
-#     + (letters[0] + letters[60], letters[28]) # accented A
-#     + (letters[4] + letters[60], letters[36]) # accented E
-#     + (letters[8] + letters[60], letters[40]) # accented I
-#     + (letters[14] + letters[60], letters[46]) # accented O
-#     + (letters[20] + letters[60], letters[52]) # accented U
-#  - for letters[61] (̧')
-#     + (letters[2] + letters[61], letters[76]) # accented C
+#  - for letters[59] (`)
+#     + (letters[1] + letters[59], letters[27]) # accented A
+#     + (letters[5] + letters[59], letters[35]) # accented E
+#     + (letters[21] + letters[59], letters[51]) # accented U
+#  - for letters[60] ('́)
+#     + (letters[15] + letters[60], letters[46]) # accented O
+#     + (letters[5] + letters[60], letters[36]) # accented E
+#  - for letters[61] (^)
+#     + (letters[1] + letters[61], letters[29]) # accented A
+#     + (letters[5] + letters[61], letters[37]) # accented E
+#     + (letters[9] + letters[61], letters[41]) # accented I
+#     + (letters[15] + letters[61], letters[47]) # accented O
+#     + (letters[21] + letters[61], letters[53]) # accented U
+#  - for letters[62] (̧')
+#     + (letters[3] + letters[62], letters[77]) # accented C
 #
 # Pre-requisites:
-#  - run `count_word.py` to generate `chars.csv` for cv-corpus-6.1-2020-12-11
+#  - run `extract_text.py` to generate `{train,dev,test}.txt`
+#  - run `count_word.py` to generate `chars.csv` for `all.txt` of cv-corpus-6.1-2020-12-11
 #  - run `subset_by_letter.py` to generate `all_*.csv` for all letters
 #
 # Zhenhao Ge, 2022-02-16
@@ -38,16 +39,17 @@
 import os
 import glob
 
-dataset = 'cv-corpus-6.1-2020-12-11'
+# dataset = 'cv-corpus-6.1-2020-12-11'
+dataset = 'cv-corpus-8.0-2022-01-19'
 filetype = 'csv'
 letter_file = '../templates/speech_recognition/LM/data/{}/chars.{}'.format(dataset, filetype)
 assert os.path.isfile(letter_file), '{} does not exist!'.format(letter_file)
 print('letter file: {}'.format(letter_file))
-filelist_dir = '../templates/speech_recognition/filelists/CommonVoice/cv-corpus-6.1-2020-12-11'
+filelist_dir = '../templates/speech_recognition/filelists/CommonVoice/{}'.format(dataset)
 sublist_files = sorted(glob.glob(os.path.join(filelist_dir, 'subset_by_letter', '*.{}'.format(filetype))))
 print('# of sublist files: {}'.format(len(sublist_files)))
 
-idx_range = [58,62]
+idx_range = [59,63]
 sublist_files_sel = sublist_files[idx_range[0]:idx_range[1]]
 print('selected sublist files:')
 print('\n'.join([' - {}'.format(os.path.basename(f)) for f in sublist_files_sel]))
@@ -59,7 +61,6 @@ tuple_list = [line.rstrip().split('\t') for line in lines]
 letters = [entry[1] for entry in tuple_list]
 nletters = len(letters)
 print('# of letters: {}'.format(nletters))
-assert nletters == 78, "the accented letters have been converted"
 
 # show the accented letters with their indices
 print([(i, letter) for i, letter in enumerate(letters)][idx_range[0]:idx_range[1]])

@@ -7,11 +7,12 @@ import os
 import glob
 from subprocess import PIPE, run
 
-data_root = '../templates/speech_recognition/data/ots_french/FRF_ASR001'
+dataset = 'FRF_ASR002' # 'FRF_ASR001', 'FRF_ASR002'
+data_root = '../templates/speech_recognition/data/ots_french/{}'.format(dataset)
 data_processed = os.path.join(data_root, 'Processed')
 assert os.path.isdir(data_root), 'dir {} does not exist!'.format(data_processed)
 data_resampled = os.path.join(data_root, 'Resampled')
-# listfile = '../templates/speech_recognition/filelists/ots_french/frf_asr001/all.json'
+# listfile = '../templates/speech_recognition/filelists/ots_french/{}/all.json'.format(dataset)
 # assert os.path.isfile(listfile), 'file {} does not exist!'.format(listfile)
 
 # set the resampling rate
@@ -20,6 +21,7 @@ sr = 16000
 # get all input audio files
 audio_files = glob.glob(os.path.join(data_processed, '**', '*.wav'), recursive=True)
 nfiles = len(audio_files)
+print('{} files in {}'.format(nfiles, data_processed))
 
 for i, audio_file in enumerate(audio_files):
     if i % 100 == 0:

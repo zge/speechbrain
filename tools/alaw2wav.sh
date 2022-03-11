@@ -5,8 +5,9 @@
 #
 # Zhenhao Ge, 2022-01-25
 
-FROM_DIR="${HOME}/Data/ots_french/FRF_ASR001/Audio"
-TO_DIR="${HOME}/Data/ots_french/FRF_ASR001/Audio"
+dataset=FRF_ASR002 # FRF_ASR001, FRF_ASR002
+FROM_DIR="${HOME}/Data/ots_french/${dataset}/Audio"
+TO_DIR="${HOME}/Data/ots_french/${dataset}/Audio"
 
 # sanity check for directories
 [ ! -d ${FROM_DIR} ] && echo "Error: not exist ${FROM_DIR}"

@@ -1,10 +1,9 @@
 import os
 import json
-from pathlib import Path
 
-root_dir = 'templates/speech_recognition/filelists'
-dataset = 'mini-librispeech'
-dataset = 'frf_asr001'
+root_dir = '../templates/speech_recognition/filelists'
+# dataset = 'mini-librispeech'
+dataset = 'ots_french/frf_asr001'
 
 
 def get_duration_hr(json_file):

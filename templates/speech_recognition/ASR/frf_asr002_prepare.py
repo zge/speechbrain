@@ -20,7 +20,7 @@ SEED = 1234
 RATIO = '8:1:1'
 
 
-def prepare_frf_asr001(
+def prepare_frf_asr002(
     data_folder, ext, save_train, save_valid, save_test):
 
     wav_list = sorted(get_all_files(data_folder, match_and=[".wav"]))
@@ -136,7 +136,7 @@ def create_csv(wav_list, csv_file):
 
 
 if __name__ == '__main__':
-    dataset = 'FRF_ASR001'
+    dataset = 'FRF_ASR002'
     data_folder = '{}/Data/ots_french/{}/Processed/'.format(
         Path.home(), dataset)
     list_folder = '../filelists/ots_french/{}'.format(dataset.lower())
@@ -145,4 +145,4 @@ if __name__ == '__main__':
     save_train = os.path.join(list_folder, 'train.{}'.format(ext))
     save_valid = os.path.join(list_folder, 'valid.{}'.format(ext))
     save_test = os.path.join(list_folder, 'test.{}'.format(ext))
-    prepare_frf_asr001(data_folder, ext, save_train, save_valid, save_test)
+    prepare_frf_asr002(data_folder, ext, save_train, save_valid, save_test)

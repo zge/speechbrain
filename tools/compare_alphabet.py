@@ -89,7 +89,7 @@ def read_text(annotation_file, filetype):
 
     return lines
 
-dataset = 'cv-corpus-6.1-2020-12-11'
+dataset = 'cv-corpus-8.0-2022-01-19'
 result_folder = '20220202_ASR-Fr-Pretrained'
 result_dir = os.path.join(Path.home(), 'OneDrive - Appen/results', result_folder)
 assert os.path.isdir(result_dir), '{} does not exist'.format(result_dir)
@@ -98,7 +98,7 @@ char_file_asr = os.path.join(result_dir, dataset, 'CRDNN', 'alphabets', 'token_c
 result_folder = '20220209_Ref-Hyp_TextInspection'
 result_dir = os.path.join(Path.home(), 'OneDrive - Appen/results', result_folder)
 assert os.path.isdir(result_dir), '{} does not exist'.format(result_dir)
-char_file_cv = os.path.join(result_dir, 'chars_corpus_6.1-2020-12-11.csv')
+char_file_cv = os.path.join(result_dir, 'chars_corpus_8.0-2022-01-19.csv')
 char_file_ots = os.path.join(result_dir, 'chars_frf_asr001.csv')
 
 letters_asr = get_letter(char_file_asr)

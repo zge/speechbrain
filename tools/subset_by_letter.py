@@ -18,18 +18,21 @@ from utils import concat_csv, csv2dict, dict2tuple, tuple2csv
 
 # # option 1 (OTS dataset)
 # dataset = 'ots_french/frf_asr001'
-# filetype = 'json'
+# dataset = 'ots_french/frf_asr002'
+dataset = 'ots_french/frf_asr003'
+filetype = 'csv'
 
 # option 2 (CV dataset)
-dataset = 'CommonVoice/cv-corpus-6.1-2020-12-11'
-filetype = 'csv'
+# dataset = 'CommonVoice/cv-corpus-6.1-2020-12-11'
+# dataset = 'CommonVoice/cv-corpus-8.0-2022-01-19'
+# filetype = 'csv'
 
 # set file list
 filelist_path = '../templates/speech_recognition/filelists/{}'.format(dataset)
 assert os.path.isdir(filelist_path), '{} does not exist!'.format(filelist_path)
 sublist_path = os.path.join(filelist_path, 'subset_by_letter')
 os.makedirs(sublist_path, exist_ok=True)
-filelist_file= os.path.join(filelist_path, 'all.{}'.format(filetype))
+filelist_file = os.path.join(filelist_path, 'all.{}'.format(filetype))
 
 # make sure overall file list exist
 if not os.path.isfile(filelist_file):
@@ -57,7 +60,8 @@ elif filetype == 'csv':
 words = [word.rstrip() for word in words]
 text = ' '.join(words)
 letters = sorted(set(text.replace(' ', '')))
-print('#letters: {}'.format(len(letters)))
+nletters = len(letters)
+print('#letters: {}'.format(nletters))
 
 # write out sub tuple list containing the letters as csv files
 for i, letter in enumerate(letters):
@@ -67,6 +71,6 @@ for i, letter in enumerate(letters):
         '_{:02d}_{}.csv'.format(i, utf8_code))
     csvpath = os.path.join(sublist_path, csvfile)
     tuple_list_sel = [entry for entry in tuple_list if letter in entry[idx_word]]
-    print('writing subset with letter {} ({}) to {} ...'.format(
+    print('[{}/{}] writing subset with letter {} ({}) to {} ...'.format(i+1, nletters,
         letter, utf8_code, csvpath))
     tuple2csv(tuple_list_sel, csvpath, colname=keys)

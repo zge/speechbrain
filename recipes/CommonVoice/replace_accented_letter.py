@@ -18,7 +18,7 @@
 #     + (letters[15] + letters[61], letters[47]) # accented O
 #     + (letters[21] + letters[61], letters[53]) # accented U
 #  - for letters[62] (̧')
-#     + (letters[3] + letters[62], letters[77]) # accented C
+#     + (letters[3] + letters[62], letters[82]) # accented C
 #
 # Zhenhao Ge, 2022-02-18
 
@@ -54,14 +54,16 @@ def tuple2csv(tuples, csvname='filename.csv', colname=[], verbose=True):
 
 # os.chdir('recipes/CommonVoice/')
 
-data_dir = 'exp/CommonVoice/cv-corpus-6.1-2020-12-11/'
+# data_dir = 'exp/CommonVoice/cv-corpus-6.1-2020-12-11/'
+data_dir = 'exp/CommonVoice/cv-corpus-8.0-2022-01-19/'
 assert os.path.isdir(data_dir), '{} does not exist!'.format(data_dir)
 
 # get all texts
 texts_all = []
 csv_files = ['train.csv', 'dev.csv', 'test.csv']
 for csv_file in csv_files:
-    texts = get_text(csv_file)
+    csv_path = os.path.join(data_dir, csv_file)
+    texts = get_text(csv_path)
     texts_all += texts
 
 # check current alphabet
@@ -73,6 +75,7 @@ char_dict = get_char_dict(characters)
 # find the indices of accent letters (59,60,61,62)
 letters = sorted(set(characters))
 print('\n'.join(['{}, {}'.format(i, letter) for (i,letter) in enumerate(letters)]))
+
 
 # setup the replacement tuples
 replacement_tuples = []
@@ -86,7 +89,8 @@ replacement_tuples.append((letters[5] + letters[61], letters[37]))
 replacement_tuples.append((letters[9] + letters[61], letters[41]))
 replacement_tuples.append((letters[15] + letters[61], letters[47]))
 replacement_tuples.append((letters[21] + letters[61], letters[53]))
-replacement_tuples.append((letters[3] + letters[62], letters[77]))
+# replacement_tuples.append((letters[3] + letters[62], letters[77]))
+replacement_tuples.append((letters[3] + letters[62], letters[82]))
 
 for csv_file in csv_files:
 

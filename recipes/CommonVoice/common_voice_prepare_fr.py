@@ -383,7 +383,8 @@ def strip_accents(text):
 
 from recipes.CommonVoice.common_voice_prepare import prepare_common_voice
 dataclass = 'CommonVoice'
-dataset = 'cv-corpus-6.1-2020-12-11'
+# dataset = 'cv-corpus-6.1-2020-12-11'
+dataset = 'cv-corpus-8.0-2022-01-19'
 language = 'fr'
 data_folder = 'data/{}/{}/{}'.format(dataclass, dataset, language)
 save_folder = 'exp/{}/{}'.format(dataclass, dataset)
@@ -392,6 +393,9 @@ dev_tsv_file = 'data/{}/{}/{}/dev.tsv'.format(dataclass, dataset, language)
 test_tsv_file = 'data/{}/{}/{}/test.tsv'.format(dataclass, dataset, language)
 accented_letters = True
 duration_threshold = 10
+
+print('data folder: {}'.format(data_folder))
+print('save folder: {}'.format(save_folder))
 
 prepare_common_voice( \
     data_folder, \

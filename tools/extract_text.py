@@ -8,18 +8,21 @@ Zhenhao Ge, 2022-01-26
 
 import os
 
-# # example 1 (read text from json files)
-# cats = ['train', 'valid', 'test']
-# flist_dir = 'templates/speech_recognition/filelists/ots_french/frf_asr001'
-# text_dir = 'templates/speech_recognition/LM/data/frf_asr001'
-# filetype = 'json'
+# example 1
+dataset = 'frf_asr003'
+cats = ['train', 'valid', 'test']
+flist_dir = os.path.join('../templates/speech_recognition/filelists/ots_french', dataset)
+text_dir = os.path.join('../templates/speech_recognition/LM/data', dataset)
+filetype = 'csv' # 'json' or 'csv'
 
-# example 2 (read text from csv files)
-cats = ['train', 'dev', 'test']
-flist_dir = 'templates/speech_recognition/filelists/CommonVoice/cv-corpus-6.1-2020-12-11'
-text_dir = 'templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11'
-os.makedirs(text_dir, exist_ok=True)
-filetype = 'csv'
+# # example 2
+# cats = ['train', 'dev', 'test']
+# # flist_dir = '../templates/speech_recognition/filelists/CommonVoice/cv-corpus-6.1-2020-12-11'
+# # text_dir = '../templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11'
+# flist_dir = '../templates/speech_recognition/filelists/CommonVoice/cv-corpus-8.0-2022-01-19'
+# text_dir = '../templates/speech_recognition/LM/data/cv-corpus-8.0-2022-01-19'
+# os.makedirs(text_dir, exist_ok=True)
+# filetype = 'csv'
 
 def convert_symbol(text, l1, l2, quote='"'):
   """convert symbol l1 to l2 if inside quote"""
@@ -78,6 +81,8 @@ for cat in cats:
     assert os.path.isfile(flistfile), 'filelist file {} does not exist!'.format(flistfile)
     lines = read_text(flistfile, filetype)
     textfile = os.path.join(text_dir, '{}.txt'.format(cat))
+    textdir = os.path.dirname(textfile)
+    os.makedirs(textdir, exist_ok=True)
     open(textfile, 'w').writelines('\n'.join(lines))
     print('wrote to {}'.format(textfile))
 
@@ -94,4 +99,6 @@ print('wrote to {}'.format(outfile))
 lines = open(outfile, 'r').readlines()
 single_line = ' '.join([line.rstrip() for line in lines])
 letters = sorted(set(single_line.replace(' ', '')))
-assert len(letters) == 74, "# of letters should be 74!"
+for i, letter in enumerate(letters):
+    print('{}: {}'.format(i, letter))
+assert len(letters) == 39, "# of letters should be 39!"

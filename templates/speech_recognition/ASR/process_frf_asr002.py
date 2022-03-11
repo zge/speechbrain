@@ -1,7 +1,7 @@
-# Process FRF_ASR001 dataset from raw data to the data usable in speechbrain
+# Process FRF_ASR002 dataset from raw data to the data usable in speechbrain
 # i.e., easily to prepare the filelists with audio file, texts, and duration
 #
-# Zhenhao Ge, 2022-01-25
+# Zhenhao Ge, 2022-03-10
 
 import os
 import glob
@@ -11,31 +11,54 @@ from pathlib import Path
 from tools.audio import audioread, audiowrite, wav_duration
 # from tools.audio import soundsc
 
-def remove_bracket(text):
-    """remove contents in the brackets <>"""
-    n = len(text)
-    flag = True # copy or skip
-    text2 = ''
+def process_text(text):
+    """ process text to remove symbols
+     - remove tags: {spk}, {noise}, {click}, {beep},
+       <caller>, </caller>, <recipient>, </recipient>
+     - invalid if contains: <bmusic>, <bnoise>, <bspeech>, <foreign>, [utx],
+       +WORD, WOR-, -ORD, ~ WORD, (()), ((Word Word))
+     - conversion: %ah, %um, %hmm -> ah, um, hmm
+    """
 
-    # loop over to copy or skip characters inside '<>'
-    i = 0
-    while i < n:
-        if flag:
-            if text[i] != '<':
-                text2 += text[i]
-            else:
-                flag = False
-        else:
-            if text[i] == '>':
-                flag = True
-        i += 1
+    # return empty string if invalid tags present
+    invalid_tags = ['<bmusic>', '<bnoise>', '<bspeech>', '<foreign>',
+                    '<nospeech>', '</error>',
+                    '[utx]', ' +', '- ', ' -', ' ~ ', '((', '))']
+    for tag in invalid_tags:
+        if tag in text:
+            return ''
 
-    # remove '(())'
-    text2 = text2.replace('(())','')
+    text2 = text[:]
+
+    # remove removable tags
+    remove_tags = ['{spk}', '{noise}', '{click}', '{beep}',
+            '<caller>', '</caller>', '<recipient>', '</recipient>']
+    for tag in remove_tags:
+        text2 = text2.replace(tag, '')
+
+    # convert tags by removing '%' in the front
+    convert_tags = ['%ah', '%um', '%hmm']
+    for tag in convert_tags:
+        if tag in text2:
+            text2 = text2.replace(tag, tag[1:])
 
     # remove redundant spaces
     text2 = ' '.join(text2.strip().split())
+
+    # sanity check (should not contain following symbols)
+    symbols = ['{', '}', '[', ']', '<', '>', '(', ')', '~', '/', '%']
+    for symbol in symbols:
+        if symbol in text2:
+            raise Exception('{} in {}'.format(symbol, text2))
+
     return text2
+
+def get_ts_lines(lines):
+    idxs = [i for i, line in enumerate(lines) if line[0] == '[' and line[-2:] == ']\n']
+    return idxs
+
+def remove_line(lines, idx):
+    return lines[:idx] + lines[idx+1:]
 
 def extract_segment(textfile):
     """get segments from text file"""
@@ -48,13 +71,29 @@ def extract_segment(textfile):
     # remove ending lines
     while lines[-1][0] != '[':
         lines = lines[:-1]
+
+    # remove redundant timestamps
+    extra_ts = True
+    while extra_ts:
+        idxs = get_ts_lines(lines)
+        ii_odd = [i for i,odd in enumerate([idx%2 for idx in idxs]) if odd==1]
+        if len(ii_odd) > 0:
+            idx_first_odd = idxs[ii_odd[0]]
+            idx_before_first_odd = idxs[ii_odd[0] - 1]
+            if idx_first_odd - idx_before_first_odd == 1:
+                lines = remove_line(lines, idx_before_first_odd)
+            else:
+                raise Exception('check lines of timestamp in {}'.format(textfile))
+        else:
+           extra_ts = False
+
     nlines = len(lines)
 
     segments = []
     for i in range(0,nlines-2,2):
         start = float(lines[i].rstrip()[1:-1])
         text = lines[i+1].rstrip()
-        text2 = remove_bracket(text)
+        text2 = process_text(text)
         for letter in letters:
             text2 = text2.replace(letter, ' ')
         end = float(lines[i+2].rstrip()[1:-1])
@@ -73,7 +112,7 @@ def tuple2csv(tuples, csvname='filename.csv', colname=[], encoding='utf-8', verb
     if verbose:
         print('{} saved!'.format(csvname))
 
-dataset = 'FRF_ASR001'
+dataset = 'FRF_ASR002'
 in_dir = "{}/Data/ots_french/{}/Audio".format(Path.home(), dataset)
 out_dir = "{}/Data/ots_french/{}/Processed".format(Path.home(), dataset)
 os.makedirs(out_dir, exist_ok=True)
@@ -87,12 +126,18 @@ dur_max = 10 # max duration for utterance (longer utterance is not good for alig
 # letters = ["_", "-", "'"]
 letters = ["_", "-"] # decide not to replace "'" with space
 
+# # take a look all text files at once
+# textfiles = sorted(glob.glob(os.path.join(in_dir, '**', '*.txt'), recursive=True))
+# for textfile in textfiles:
+#     lines = open(textfile, 'r').readlines()
+#     lines = lines[1:][1:-1:2]
+
 for i, audiofile in enumerate(audiofiles):
 
     print('processing wav file {}/{}: {} ...'.format(i+1, naudiofiles, audiofile))
 
     # get text file
-    textfile = audiofile.replace('Audio', 'Transcription').replace('.wav', '.txt')
+    textfile = audiofile.replace('.wav', '.txt')
     assert os.path.isfile(textfile), '{} does not exist!'
 
     # get segments
@@ -100,12 +145,11 @@ for i, audiofile in enumerate(audiofiles):
     nsegments = len(segments)
     print('{} segments in {}'.format(nsegments, audiofile))
 
-    # get call id
-    cid = '-'.join(audiofile.split('-')[1:])
-    cid = os.path.splitext(cid)[0]
+    # get audio name
+    audioname = os.path.splitext(os.path.basename(audiofile))[0]
 
     # create call dir
-    calldir = os.path.join(out_dir, cid)
+    calldir = os.path.dirname(audiofile.replace(in_dir, out_dir))
     os.makedirs(calldir, exist_ok=True)
 
     cnt = 0
@@ -118,14 +162,13 @@ for i, audiofile in enumerate(audiofiles):
 
         cond1 = nwords > nwords_min
         cond2 = duration <= dur_max
-        cond3 = '*' not in text2
-        if cond1 and cond2 and cond3:
+        if cond1 and cond2:
 
             # read in audio segment
             data, params = audioread(audiofile, starttime, duration)
 
             # write out audio segment
-            outfile = '{}_{:04d}.wav'.format(cid, cnt)
+            outfile = '{}_{:03d}.wav'.format(audioname, cnt)
             outpath = os.path.join(calldir, outfile)
             audiowrite(outpath, data, params)
             outpaths.append(outpath)
@@ -145,7 +188,7 @@ for i, audiofile in enumerate(audiofiles):
             # increment counter
             cnt += 1
 
-# write out original and processed texts in csv for comparison
+# compare original and processed texts in csv
 txtpaths = sorted(glob.glob(os.path.join(out_dir, '**', '*_orig.txt'), recursive=True))
 txtpaths2 = sorted(glob.glob(os.path.join(out_dir, '**', '*.txt'), recursive=True))
 txtpaths2 = [path for path in txtpaths2 if '_orig' not in path]
@@ -158,7 +201,7 @@ for path in txtpaths:
     uttid = os.path.splitext(os.path.basename(path2))[0]
     tuple_list.append((uttid, text, text2))
 header = ['uttid', 'original text', 'processed text']
-tuple2csv(tuple_list, 'text_comp.csv', header)
+tuple2csv(tuple_list, 'text_comp_{}.csv'.format(dataset.lower()), header)
 
 # compare duration before and after processing
 audiofiles_processed = sorted(glob.glob(os.path.join(out_dir, "**", "*.wav"), recursive=True))

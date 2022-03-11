@@ -77,12 +77,15 @@ def write_dict_count(csvfile, dct, delimiter=',',
 
 
 # specify dataset, e.g.
-# LM/data/mini-librispeech,
-# LM/data/frf_asr001,
-# LM/data/cv-corpus-6.1-2020-12-11,
-# filelists/ots_frnch/frf_asr001,
-# filelists/CommonVoice/cv-corpus-6.1-2020-12-11, etc.)
-dataset = 'cv-corpus6.1-2020-12-11'
+#  - LM/data/mini-librispeech,
+#  - LM/data/frf_asr001,
+#  - LM/data/cv-corpus-6.1-2020-12-11,
+#  - filelists/ots_frnch/frf_asr001,
+#  - filelists/CommonVoice/cv-corpus-6.1-2020-12-11, etc.)
+
+# dataset = 'cv-corpus-6.1-2020-12-11'
+# dataset = 'cv-corpus-8.0-2022-01-19'
+dataset = 'frf_asr002'
 # specify file type (txt, csv, or json)
 filetype = 'txt'
 
@@ -107,37 +110,44 @@ if dataset == 'frf_asr001' and filetype == 'json':
         nwords, ncharacters = get_word_char(jsonfile, type='json')[-2:]
         print('{}: {} words, {} characters'.format(jsonfile, nwords, ncharacters))
 
-# count for txt file in cv-corpus6.1-2020-12-11
-if dataset == 'cv-corpus6.1-2020-12-11' and filetype == 'txt'
+# count for txt file in cv-corpus-6.1-2020-12-11
+if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'txt'
     for filename in ['train.txt', 'dev.txt', 'test.txt']:
         textfile = os.path.join('templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11', filename)
         nwords, ncharacters = get_word_char(textfile, type='text')[-2:]
-        print('{}: {} words, {} characters'.format(jsonfile, nwords, ncharacters))
+        print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
 
-# generate 'words.csv' and 'chars.csv' from 'all.txt' for frf_asr001
+# count for txt file in cv-corpus-8.0-2022-01-19
+if dataset == 'cv-corpus-8.0-2022-01-19' and filetype == 'txt'
+    for filename in ['train.txt', 'dev.txt', 'test.txt']:
+        textfile = os.path.join('templates/speech_recognition/LM/data/cv-corpus-8.0-2022-01-19', filename)
+        nwords, ncharacters = get_word_char(textfile, type='text')[-2:]
+        print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
+
+# generate 'words.csv' and 'chars.csv' from 'all.txt' for frf_asr002
 # pre-requisite 'all.txt' is generated from extract_text.py
-textfile = os.path.join('templates/speech_recognition/LM/data/frf_asr001', 'all.txt')
+textfile = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'all.txt')
 assert os.path.isfile(textfile), '{} does not exist'.format(textfile)
 word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
-word_count_file = os.path.join('templates/speech_recognition/LM/data/frf_asr001', 'words.csv')
+word_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'words.csv')
 write_dict_count(word_count_file, word_dict)
 print('#words: {}'.format(len(word_dict.keys())))
 print('wrote word dict to {}'.format(word_count_file))
-char_count_file = os.path.join('templates/speech_recognition/LM/data/frf_asr001', 'chars.csv')
+char_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'chars.csv')
 write_dict_count(char_count_file, char_dict, delimiter='\t')
 print('#letters: {}'.format(len(char_dict.keys())))
 print('wrote char dict to {}'.format(char_count_file))
 
-# generate 'words.csv' and 'chars.csv' from 'all.txt' for cv-corpus-6.1-2020-12-11
+# generate 'words.csv' and 'chars.csv' from 'all.txt' for CV dataset
 # pre-requisite 'all.txt' is generated from extract_text.py
-textfile = os.path.join('templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11', 'all.txt')
+textfile = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'all.txt')
 assert os.path.isfile(textfile), '{} does not exist'.format(textfile)
 word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
-word_count_file = os.path.join('templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11', 'words.csv')
+word_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'words.csv')
 write_dict_count(word_count_file, word_dict)
 print('#words: {}'.format(len(word_dict.keys())))
 print('wrote word dict to {}'.format(word_count_file))
-char_count_file = os.path.join('templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11', 'chars.csv')
+char_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'chars.csv')
 write_dict_count(char_count_file, char_dict, delimiter='\t')
 print('#letters: {}'.format(len(char_dict.keys())))
 print('wrote char dict to {}'.format(char_count_file))
