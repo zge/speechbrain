@@ -9,6 +9,7 @@ Zhenhao Ge, 2022-01-26
 import os
 
 # example 1
+# dataset = 'frf_asr002'
 dataset = 'frf_asr003'
 cats = ['train', 'valid', 'test']
 flist_dir = os.path.join('../templates/speech_recognition/filelists/ots_french', dataset)

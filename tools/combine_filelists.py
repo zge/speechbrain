@@ -54,9 +54,9 @@ def combine_filelist_files(infiles, outfile, seed=1234):
 # set the file list dirs
 root_dir = '../templates/speech_recognition/filelists/'
 filelist_dir_cv = os.path.join(root_dir, 'CommonVoice/cv-corpus-8.0-2022-01-19')
-filelist_dir_ots1 = os.path.join(root_dir, 'ots_french/FRF_ASR001')
-filelist_dir_ots2 = os.path.join(root_dir, 'ots_french/FRF_ASR002')
-filelist_dir_ots3 = os.path.join(root_dir, 'ots_french/FRF_ASR003')
+filelist_dir_ots1 = os.path.join(root_dir, 'ots_french/frf_asr001')
+filelist_dir_ots2 = os.path.join(root_dir, 'ots_french/frf_asr002')
+filelist_dir_ots3 = os.path.join(root_dir, 'ots_french/frf_asr003')
 
 # make dir for the combined file lists
 filelist_dir_combined = os.path.join(root_dir, 'cv_with_ots')
@@ -119,6 +119,3 @@ for filelist_check in filelist_checks:
     # for i, letter in enumerate(letters):
     #     print('{}: {}'.format(i, letter))
     print('#letters in {}: {}'.format(filelist_check, len(letters)))
-
-
-
