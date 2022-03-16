@@ -120,7 +120,7 @@ def create_csv(wav_list, csv_file):
         path_parts = wav_file.split(os.path.sep)
         uttid, _ = os.path.splitext(path_parts[-1])
         spk_id = '_'.join(uttid.split('_')[:-1])
-        relative_path = os.path.join("$data_root", *path_parts[-2:])
+        relative_path = os.path.join("$data_root", *path_parts[-3:])
 
         # Create entry for this utterance
         tuple_list.append((uttid, str(duration), relative_path, spk_id, trans))

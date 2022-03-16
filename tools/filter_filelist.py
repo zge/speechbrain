@@ -71,9 +71,9 @@ print('#letters in {}: {}'.format(os.path.basename(char_file_standard), len(lett
 letters_common = [l for l in letters_standard if l in letters_extra]
 print('#letters in both standard and extra: {}'.format(len(letters_common)))
 
-# find letters in CV but not in OTS
+# find letters in extra but not in standard
 letters_extra_not_standard = [l for l in letters_extra if l not in letters_standard]
-print('#letters in cv but not in standard: {}'.format(len(letters_extra_not_standard)))
+print('#letters in extra but not in standard: {}'.format(len(letters_extra_not_standard)))
 
 # csv_files = ['train.csv', 'dev.csv', 'test.csv']
 csv_files = ['train.csv', 'valid.csv', 'test.csv']

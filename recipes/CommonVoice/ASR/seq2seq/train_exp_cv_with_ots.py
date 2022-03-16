@@ -273,7 +273,7 @@ if __name__ == "__main__":
 
     # Load hyperparameters file with command-line overrides
     # hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
-    argvs = ['ASR/seq2seq/hparams/train_fr_exp_cv.yml', '--batch_size=1', '--device=cpu']
+    argvs = ['ASR/seq2seq/hparams/train_fr_exp_cv_with_ots.yml', '--batch_size=1', '--device=cpu']
     hparams_file, run_opts, overrides = sb.parse_arguments(argvs)
 
     with open(hparams_file) as fin:
