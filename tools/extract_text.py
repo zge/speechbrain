@@ -95,7 +95,7 @@ with open(outfile, 'w') as outf:
             outf.write(inf.read())
 print('wrote to {}'.format(outfile))
 
-# sanity check: find the alphabet size in outfile
+# sanity check: find the alphabet size in the outfile
 lines = open(outfile, 'r').readlines()
 single_line = ' '.join([line.rstrip() for line in lines])
 letters = sorted(set(single_line.replace(' ', '')))

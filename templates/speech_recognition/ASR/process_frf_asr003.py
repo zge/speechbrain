@@ -14,7 +14,7 @@ def process_text(text):
     """ process text to remove symbols
      - remove symbols: '!'
     """
-    letters = ['!', '-', '.', ':', '/', ';', '?']
+    letters = ['!', '-', '.', ':', '/', ';', '?', '"']
     for letter in letters:
         text = text.replace(letter, '')
     return text

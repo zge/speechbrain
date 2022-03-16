@@ -15,7 +15,7 @@ from speechbrain.utils.data_utils import get_all_files
 from speechbrain.dataio.dataio import read_audio
 
 logger = logging.getLogger(__name__)
-SAMPLERATE = 8000
+SAMPLERATE = 16000 # 16000 for FRF_ASR003
 SEED = 1234
 RATIO = '8:1:1'
 

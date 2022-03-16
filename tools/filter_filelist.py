@@ -44,34 +44,36 @@ def concat_csv(infiles, outfile, have_header=True, verbose=True):
     if verbose:
         print('{} saved!'.format(outfile))
 
-char_file_ots = os.path.join('../templates/speech_recognition/LM/data',
-                           'frf_asr001', 'chars.csv')
-assert os.path.isfile(char_file_ots), '{} does not exist'.format(char_file_ots)
+dataset_standard = 'frf_asr001'
+char_file_standard = os.path.join('../templates/speech_recognition/LM/data',
+                           dataset_standard, 'chars.csv')
+assert os.path.isfile(char_file_standard), '{} does not exist'.format(char_file_standard)
 
 # set filelist dir
 # filelist_dir = '../recipes/CommonVoice/exp/CommonVoice/cv-corpus-8.0-2022-01-19/'
-filelist_dir = '../templates/speech_recognition/filelists/ots_french/frf_asr002/'
+filelist_dir = '../templates/speech_recognition/filelists/ots_french/{}/'.format(dataset)
 assert os.path.isdir(filelist_dir), '{} does not exist!'.format(filelist_dir)
 
 # get letter files
+dataset_extra = 'frf_asr003'
 # char_file_extra = os.path.join('../templates/speech_recognition/LM/data',
 #                            'cv-corpus-8.0-2022-01-19', 'chars.csv')
 char_file_extra = os.path.join('../templates/speech_recognition/LM/data',
-                           'frf_asr002', 'chars.csv')
+                           dataset_extra, 'chars.csv')
 assert os.path.isfile(char_file_extra), '{} does not exsit'.format(char_file_extra)
 
 letters_extra = get_letter(char_file_extra)
-letters_ots = get_letter(char_file_ots)
+letters_standard = get_letter(char_file_standard)
 print('#letters in {}: {}'.format(os.path.basename(char_file_extra), len(letters_extra)))
-print('#letters in {}: {}'.format(os.path.basename(char_file_ots), len(letters_ots)))
+print('#letters in {}: {}'.format(os.path.basename(char_file_standard), len(letters_standard)))
 
-# find common letters in both OTS and CV
-letters_common = [l for l in letters_ots if l in letters_extra]
-print('#letters in both ots and cv: {}'.format(len(letters_common)))
+# find common letters in both standard and extra
+letters_common = [l for l in letters_standard if l in letters_extra]
+print('#letters in both standard and extra: {}'.format(len(letters_common)))
 
 # find letters in CV but not in OTS
-letters_extra_not_ots = [l for l in letters_extra if l not in letters_ots]
-print('#letters in cv but not in ots: {}'.format(len(letters_extra_not_ots)))
+letters_extra_not_standard = [l for l in letters_extra if l not in letters_standard]
+print('#letters in cv but not in standard: {}'.format(len(letters_extra_not_standard)))
 
 # csv_files = ['train.csv', 'dev.csv', 'test.csv']
 csv_files = ['train.csv', 'valid.csv', 'test.csv']
@@ -90,7 +92,7 @@ for csv_file in csv_files:
     entries2, cnt, durations_rm = [], 0, []
     for entry in entries:
         duration, text = float(entry[1]), entry[-1]
-        letters_sel = [l for l in text if l in letters_extra_not_ots]
+        letters_sel = [l for l in text if l in letters_extra_not_standard]
         if len(letters_sel) == 0:
             entries2.append(entry)
         else:
