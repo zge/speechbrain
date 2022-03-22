@@ -20,9 +20,9 @@ train_log: results/cv_with_ots_fr_seq2seq_ctc_attention_now2v_nosmooth/train_log
 data_folder: data
 accented_letters: true
 language: fr # use 'it' for Italian, 'rw' for Kinyarwanda, 'en' for english
-train_csv: ../../templates/speech_recognition/filelists/cv_with_ots/train.csv
-valid_csv: ../../templates/speech_recognition/filelists/cv_with_ots/valid.csv
-test_csv: ../../templates/speech_recognition/filelists/cv_with_ots/test.csv
+train_csv: ../../templates/speech_recognition/filelists/cv_with_ots/train_tiny.csv
+valid_csv: ../../templates/speech_recognition/filelists/cv_with_ots/valid_tiny.csv
+test_csv: ../../templates/speech_recognition/filelists/cv_with_ots/test_tiny.csv
 skip_prep: true # Skip data preparation
 
 # We remove utterance slonger than 10s in the train/dev/test sets as
@@ -39,15 +39,15 @@ sorting: ascending
 # With data_parallel batch_size is split into N jobs
 # With DDP batch_size is multiplied by N jobs
 # Must be 6 per GPU to fit 16GB of VRAM
-batch_size: 1 # 12
-test_batch_size: 8
+batch_size: 4 # 12
+test_batch_size: 4
 
 dataloader_options:
-  batch_size: 1 # 12
-  num_workers: 0 # 6
+  batch_size: 4 # 12
+  num_workers: 2 # 6
 test_dataloader_options:
-  batch_size: 1 # 8
-  num_workers: 0 # 6
+  batch_size: 4 # 8
+  num_workers: 2 # 6
 
 # BPE parameters
 token_type: unigram  # ["unigram", "bpe", "char"]
@@ -214,7 +214,7 @@ beam_searcher: !new:speechbrain.decoders.S2SRNNBeamSearcher
   temperature: 1.50
 
 checkpointer: !new:speechbrain.utils.checkpoints.Checkpointer
-  checkpoints_dir: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth/save
+  checkpoints_dir: results/cv_with_ots_fr_seq2seq_ctc_attention_now2v_nosmooth/save
   recoverables:
     model: *id009
     scheduler: *id010

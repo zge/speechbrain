@@ -272,9 +272,10 @@ if __name__ == "__main__":
     # os.chdir('/Users/zhge/PycharmProjects/speechbrain/recipes/CommonVoice')
 
     # Load hyperparameters file with command-line overrides
-    # hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
-    argvs = ['ASR/seq2seq/hparams/train_fr_exp_cv_with_ots.yml', '--batch_size=1', '--device=cpu']
-    hparams_file, run_opts, overrides = sb.parse_arguments(argvs)
+    hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
+    # argvs = ['ASR/seq2seq/hparams/train_fr_exp_cv_with_ots.yml', '--batch_size=2', '--device=cuda:3']
+    # print('arguments: {}'.format(argvs))
+    # hparams_file, run_opts, overrides = sb.parse_arguments(argvs)
 
     with open(hparams_file) as fin:
         hparams = load_hyperpyyaml(fin, overrides)
