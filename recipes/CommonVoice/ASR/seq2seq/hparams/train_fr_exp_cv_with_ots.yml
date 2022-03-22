@@ -221,7 +221,7 @@ checkpointer: !new:speechbrain.utils.checkpoints.Checkpointer
     normalizer: *id008
     counter: *id011
 train_logger: !new:speechbrain.utils.train_logger.FileTrainLogger
-  save_file: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth/train_log.txt
+  save_file: results/cv_with_ots_fr_seq2seq_ctc_attention_now2v_nosmooth/train_log.txt
 
 error_rate_computer: !name:speechbrain.utils.metric_stats.ErrorRateStats
 
