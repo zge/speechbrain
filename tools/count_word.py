@@ -16,6 +16,9 @@ def get_word_char(filepath, type='text'):
     # read text lines
     if type == 'text':
         lines = open(filepath, 'r').readlines()
+    elif type== 'csv':
+        lines = open(filepath, 'r').readlines()
+        lines = [line.split(',')[-1] for line in lines[1:]]
     elif type == 'json':
         with open(filepath, 'r') as f:
             json_dict = json.load(f)
@@ -112,17 +115,35 @@ if dataset == 'frf_asr001' and filetype == 'json':
         print('{}: {} words, {} characters'.format(jsonfile, nwords, ncharacters))
 
 # count for txt file in cv-corpus-6.1-2020-12-11
-if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'txt'
+if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'txt':
     for filename in ['train.txt', 'dev.txt', 'test.txt']:
         textfile = os.path.join('templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11', filename)
-        nwords, ncharacters = get_word_char(textfile, type='text')[-2:]
+        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
+        print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
+        print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
+
+# count for csv file in cv-corpus-6.1-2020-12-11
+if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'csv':
+    for filename in ['train.csv', 'dev.csv', 'test.csv']:
+        textfile = os.path.join('recipes/CommonVoice/exp/CommonVoice/cv-corpus-6.1-2020-12-11', filename)
+        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='csv')
+        print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
         print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
 
 # count for txt file in cv-corpus-8.0-2022-01-19
-if dataset == 'cv-corpus-8.0-2022-01-19' and filetype == 'txt'
+if dataset == 'cv-corpus-8.0-2022-01-19' and filetype == 'txt':
     for filename in ['train.txt', 'dev.txt', 'test.txt']:
         textfile = os.path.join('templates/speech_recognition/LM/data/cv-corpus-8.0-2022-01-19', filename)
-        nwords, ncharacters = get_word_char(textfile, type='text')[-2:]
+        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
+        print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
+        print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
+
+# count for csv file in cv-corpus-8.0-2022-01-19
+if dataset == 'cv-corpus-8.0-2022-01-19' and filetype == 'csv':
+    for filename in ['train.csv', 'dev.csv', 'test.csv']:
+        textfile = os.path.join('recipes/CommonVoice/exp/CommonVoice/cv-corpus-8.0-2022-01-19', filename)
+        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='csv')
+        print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
         print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
 
 # generate 'words.csv' and 'chars.csv' from 'all.txt' for frf_asr002
