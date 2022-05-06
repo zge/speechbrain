@@ -2,11 +2,16 @@ import os
 import boto3
 from pathlib import Path
 
-exec_role_name = 'ml-trainable-container-sandbox'
-# exec_role_name = 'AWS.AD.F8.Platform.Developer'
-# exec_role_name = 'AWS.AD.US.Data.Science.Developer'
+# AWS-F8Dev
+exec_role_name = 'AmazonSageMaker-ExecutionRole-20220429T104671'
+source_profile = 'zge-f8dev'
 
-source_profile = 'zge-f8'
+# # AWS-F8
+# exec_role_name = 'ml-trainable-container-sandbox'
+# source_profile = 'zge-f8'
+
+# # AWS-Staging
+# exec_role_name = 'AmazonSageMaker-ExecutionRole-20200114T141144'
 # source_profile = 'zge'
 
 def get_credentials(source_profile):
