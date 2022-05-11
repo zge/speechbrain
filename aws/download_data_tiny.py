@@ -33,7 +33,7 @@ def download_folder(bucket, folder_s3, folder_local):
             print('skip {} --> {} ...'.format(infile, outfile))
         else:
             s3.Bucket(bucket).download_file(infile, outfile)
-            print('{} --> {} ...'.format(infile, outfile))
+            print('{} --> {} ...'.format(os.path.join(bucket, infile), outfile))
     end_time = time.monotonic()
     duration = end_time - start_time
     print('data downloading time: {}'.format(timedelta(seconds=duration)))
