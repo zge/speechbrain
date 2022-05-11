@@ -12,11 +12,11 @@ folder_local = sys.argv[3] # /opt/data (docker), '/data6/zge-speechbrain/data'
 # folder_s3 = 'data/tiny'
 # folder_local = '/home/sagemaker-user/data'
 
+print('{} --> {}'.format(os.path.join(bucket, folder_s3), folder_local))
+
 if not os.path.exists(folder_local):
     print('creating dir: {}'.format(folder_local))
     os.makedirs(folder_local)
-
-print('{} --> {}'.format(os.path.join(bucket, folder_s3), folder_local))
 
 def download_folder(bucket, folder_s3, folder_local):
     s3 = boto3.resource('s3')
@@ -36,6 +36,7 @@ def download_folder(bucket, folder_s3, folder_local):
             print('{} --> {} ...'.format(infile, outfile))
     end_time = time.monotonic()
     duration = end_time - start_time
-    print('data downloading time: {}'.format(timedelta(seconds=duration))
+    print('data downloading time: {}'.format(timedelta(seconds=duration)))
 
-download_folder(bucket, folder_s3, folder_local)
+if __name__ == '__main__':
+    download_folder(bucket, folder_s3, folder_local)
