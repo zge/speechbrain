@@ -2,7 +2,6 @@
 #
 # run training
 
-
 if aws s3api wait bucket-exists --bucket "zge-exp/" ; then
   echo "bucket zge-exp exist"
 fi
