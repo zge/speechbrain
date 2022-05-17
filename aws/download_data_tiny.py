@@ -23,7 +23,7 @@ def download_folder(bucket, folder_s3, folder_local):
     start_time = time.monotonic()
     for obj in s3.Bucket(bucket).objects.filter(Prefix=folder_s3):
         infile = obj.key
-        pardir = os.path.join(folder_local, os.path.dirname(infile))
+        pardir = os.path.join(folder_local, os.path.dirname(infile).replace(folder_s3, 'data'))
         filename = os.path.basename(infile)
         if not os.path.exists(pardir):
             os.makedirs(pardir, exist_ok=True)
