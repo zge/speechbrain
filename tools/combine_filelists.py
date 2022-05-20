@@ -23,33 +23,39 @@ def combine_filelist_files(infiles, outfile, seed=1234):
     lines_cv = replace_path(filelist_cv, path1, path2)
     header = lines_cv[0].rstrip().split(',')
     lines_cv = lines_cv[1:] # remove the header
+    print('#files in {}: {}'.format(filelist_cv, len(lines_cv)))
 
     # get updated lines in ots1
     path1 = '$data_root/'
     path2 = '$data_root/ots_french/FRF_ASR001/Resampled/'
-    lines_ots1 = replace_path(filelist_train_ots1, path1, path2)
+    lines_ots1 = replace_path(filelist_ots1, path1, path2)
     lines_ots1 = lines_ots1[1:] # remove the header
+    print('#files in {}: {}'.format(filelist_ots1, len(lines_ots1)))
 
     # get updated lines in ots2
     path1 = '$data_root/'
     path2 = '$data_root/ots_french/FRF_ASR002/Resampled/'
     lines_ots2 = replace_path(filelist_ots2, path1, path2)
     lines_ots2 = lines_ots2[1:]  # remove the header
+    print('#files in {}: {}'.format(filelist_ots2, len(lines_ots2)))
 
     # get updated lines in ots3
     path1 = '$data_root/'
     path2 = '$data_root/ots_french/FRF_ASR003/wav/'
     lines_ots3 = replace_path(filelist_ots3, path1, path2)
     lines_ots3 = lines_ots3[1:]
+    print('#files in {}: {}'.format(filelist_ots3, len(lines_ots3)))
 
     # combined lines from multiple files randomly
     lines_combined = lines_cv + lines_ots1 + lines_ots2 + lines_ots3
     random.seed(seed)
     random.shuffle(lines_combined)
+    print('#files in {}: {}'.format(outfile, len(lines_combined)))
 
     # write combined lines into output file
     lines_combined = [','.join(header) + '\n'] + lines_combined
     open(outfile, 'w').writelines(lines_combined)
+
 
 # set the file list dirs
 root_dir = '../templates/speech_recognition/filelists/'
@@ -85,25 +91,25 @@ filelist_valid_ots1 = os.path.join(filelist_dir_ots1, 'valid.csv')
 filelist_valid_ots2 = os.path.join(filelist_dir_ots2, 'valid.csv')
 filelist_valid_ots3 = os.path.join(filelist_dir_ots3, 'valid.csv')
 
-# set the output combined file list for training
+# set the output combined file list for validation
 filelist_valid = os.path.join(filelist_dir_combined, 'valid.csv')
 
-# combine file lists for training
+# combine file lists for validation
 combine_filelist_files([filelist_valid_cv, filelist_valid_ots1, filelist_valid_ots2,
                         filelist_valid_ots3], filelist_valid, seed=1234)
 
 ### prepare the combined test file list ###
 
-# set the input file lists for validation
+# set the input file lists for testing
 filelist_test_cv = os.path.join(filelist_dir_cv, 'test.csv')
 filelist_test_ots1 = os.path.join(filelist_dir_ots1, 'test.csv')
 filelist_test_ots2 = os.path.join(filelist_dir_ots2, 'test.csv')
 filelist_test_ots3 = os.path.join(filelist_dir_ots3, 'test.csv')
 
-# set the output combined file list for training
+# set the output combined file list for testing
 filelist_test = os.path.join(filelist_dir_combined, 'test.csv')
 
-# combine file lists for training
+# combine file lists for testing
 combine_filelist_files([filelist_test_cv, filelist_test_ots1, filelist_test_ots2,
                         filelist_test_ots3], filelist_test, seed=1234)
 

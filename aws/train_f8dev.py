@@ -3,7 +3,7 @@ import os
 sys.path.append(os.getcwd())
 
 from sagemaker.estimator import Estimator
-from aws_handler import get_exec_role
+from aws_handler_f8dev import get_exec_role
 
 instance_type = 'ml.g4dn.xlarge'
 

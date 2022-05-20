@@ -2,17 +2,9 @@ import os
 import boto3
 from pathlib import Path
 
-# AWS-F8Dev
-exec_role_name = 'AmazonSageMaker-ExecutionRole-20220429T104671'
-source_profile = 'zge-f8dev'
-
-# # AWS-F8
-# exec_role_name = 'ml-trainable-container-sandbox'
-# source_profile = 'zge-f8'
-
-## AWS-Staging
-#exec_role_name = 'AmazonSageMaker-ExecutionRole-20200114T141144'
-#source_profile = 'zge'
+# AWS-Staging
+exec_role_name = 'AmazonSageMaker-ExecutionRole-20200114T141144'
+source_profile = 'zge'
 
 def get_credentials(source_profile):
     credential_file = os.path.join(Path.home(), '.aws', 'credentials')
@@ -22,10 +14,11 @@ def get_credentials(source_profile):
         if line.rstrip()[1:-1] == source_profile:
             idx1 = i + 1
         if idx1 > 0:
-            if i == idx2:
+            if i == len(lines)-1:
                 idx2 += 1
             elif line.rstrip() == '':
                 idx2 = i
+                break
     lines_sel = lines[idx1:idx2]
     credentials = {}
     for line in lines_sel:
@@ -38,7 +31,7 @@ def get_credentials(source_profile):
 credentials = get_credentials(source_profile)
 
 
-# zge-f8 credentials
+# get credentials
 os.environ['AWS_ACCESS_KEY_ID'] = credentials['aws_access_key_id']
 os.environ['AWS_SECRET_ACCESS_KEY'] = credentials['aws_secret_access_key']
 os.environ['AWS_SESSION_TOKEN'] = credentials['aws_session_token']

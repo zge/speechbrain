@@ -6,14 +6,6 @@ from pathlib import Path
 exec_role_name = 'AmazonSageMaker-ExecutionRole-20220429T104671'
 source_profile = 'zge-f8dev'
 
-# # AWS-F8
-# exec_role_name = 'ml-trainable-container-sandbox'
-# source_profile = 'zge-f8'
-
-## AWS-Staging
-#exec_role_name = 'AmazonSageMaker-ExecutionRole-20200114T141144'
-#source_profile = 'zge'
-
 def get_credentials(source_profile):
     credential_file = os.path.join(Path.home(), '.aws', 'credentials')
     lines = open(credential_file, 'r').readlines()
@@ -38,7 +30,7 @@ def get_credentials(source_profile):
 credentials = get_credentials(source_profile)
 
 
-# zge-f8 credentials
+# get credentials
 os.environ['AWS_ACCESS_KEY_ID'] = credentials['aws_access_key_id']
 os.environ['AWS_SECRET_ACCESS_KEY'] = credentials['aws_secret_access_key']
 os.environ['AWS_SESSION_TOKEN'] = credentials['aws_session_token']
