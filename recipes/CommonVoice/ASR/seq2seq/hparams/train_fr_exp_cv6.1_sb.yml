@@ -212,14 +212,14 @@ beam_searcher: !new:speechbrain.decoders.S2SRNNBeamSearcher
   temperature: 1.50
 
 checkpointer: !new:speechbrain.utils.checkpoints.Checkpointer
-  checkpoints_dir: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth/save
+  checkpoints_dir: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth_sb/save
   recoverables:
     model: *id009
     scheduler: *id010
     normalizer: *id008
     counter: *id011
 train_logger: !new:speechbrain.utils.train_logger.FileTrainLogger
-  save_file: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth/train_log.txt
+  save_file: results/cv_fr_seq2seq_ctc_attention_now2v_nosmooth_sb/train_log.txt
 
 error_rate_computer: !name:speechbrain.utils.metric_stats.ErrorRateStats
 
