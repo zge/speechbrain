@@ -4,6 +4,11 @@ Count #words and #characters from text file or json file
 Prerequisites
   - run `extract_text.py` to obtain all.txt for the dataset
 
+Function structure
+  - get_word_char
+    - get_word_dict
+    - get_char_dict
+
 Zhenhao Ge, 2022-01-26
 """
 
@@ -25,6 +30,7 @@ def get_word_char(filepath, type='text'):
         lines = [json_dict[key]['words'] for key in json_dict.keys()]
 
     lines = [line.rstrip() for line in lines]
+    nutters = len(lines)
 
     # concatenate lines into a single long line
     single_line = ' '.join(lines)
@@ -39,7 +45,23 @@ def get_word_char(filepath, type='text'):
     ncharacters = len(characters)
     char_dict = get_char_dict(characters.upper())
 
-    return word_dict, char_dict, nwords, ncharacters
+    # count #letters (unique characters)
+    letters = sorted(char_dict.keys())
+    nletters = len(letters)
+
+    # count the utterance with each char, i.e., #utters_with_letter_a
+    char2nutter_dict = {}
+    for i, letter in enumerate(letters):
+        # print('checking {}-th/{} letter {} in {} lines ...'.format(
+        #     i, nletters, letter, len(lines)))
+        for line in lines:
+            if letter in line:
+                if letter in char2nutter_dict.keys():
+                    char2nutter_dict[letter] += 1
+                else:
+                    char2nutter_dict[letter] = 1
+
+    return word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters
 
 def get_word_dict(string):
     words = string.split()
@@ -78,7 +100,6 @@ def write_dict_count(csvfile, dct, delimiter=',',
     if verbose:
         print('{} saved!'.format(csvfile))
 
-
 # specify dataset, e.g.
 #  - LM/data/mini-librispeech,
 #  - LM/data/frf_asr001,
@@ -86,10 +107,9 @@ def write_dict_count(csvfile, dct, delimiter=',',
 #  - filelists/ots_frnch/frf_asr001,
 #  - filelists/CommonVoice/cv-corpus-6.1-2020-12-11, etc.)
 
-# dataset = 'cv-corpus-6.1-2020-12-11'
-# dataset = 'cv-corpus-8.0-2022-01-19'
-# dataset = 'frf_asr002'
-dataset = 'frf_asr003'
+# specify the dataset
+# dataset = 'cv-corpus-8.0-2022-01-19' # 'cv-corpus-6.1-2020-12-11', 'cv-corpus-8.0-2022-01-19'
+dataset = 'frf_asr003' # 'frf_asr001', 'frf_asr002', 'frf_asr003'
 # specify file type (txt, csv, or json)
 filetype = 'txt'
 
@@ -114,11 +134,35 @@ if dataset == 'frf_asr001' and filetype == 'json':
         nwords, ncharacters = get_word_char(jsonfile, type='json')[-2:]
         print('{}: {} words, {} characters'.format(jsonfile, nwords, ncharacters))
 
+# count for txt files in frf_asr001
+if dataset == 'frf_asr001' and filetype == 'txt':
+    for filename in ['train.txt', 'valid.txt', 'test.txt']:
+        textfile = os.path.join('templates/speech_recognition/LM/data/frf_asr001', filename)
+        word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='text')
+        print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
+        print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
+
+# count for txt files in frf_asr002
+if dataset == 'frf_asr002' and filetype == 'txt':
+    for filename in ['train.txt', 'valid.txt', 'test.txt']:
+        textfile = os.path.join('templates/speech_recognition/LM/data/frf_asr002', filename)
+        word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='text')
+        print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
+        print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
+
+# count for txt files in frf_asr003
+if dataset == 'frf_asr003' and filetype == 'txt':
+    for filename in ['train.txt', 'valid.txt', 'test.txt']:
+        textfile = os.path.join('templates/speech_recognition/LM/data/frf_asr003', filename)
+        word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='text')
+        print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
+        print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
+
 # count for txt file in cv-corpus-6.1-2020-12-11
 if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'txt':
     for filename in ['train.txt', 'dev.txt', 'test.txt']:
         textfile = os.path.join('templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11', filename)
-        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
+        word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='text')
         print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
         print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
 
@@ -126,7 +170,7 @@ if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'txt':
 if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'csv':
     for filename in ['train.csv', 'dev.csv', 'test.csv']:
         textfile = os.path.join('recipes/CommonVoice/exp/CommonVoice/cv-corpus-6.1-2020-12-11', filename)
-        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='csv')
+        word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='csv')
         print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
         print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
 
@@ -134,7 +178,7 @@ if dataset == 'cv-corpus-6.1-2020-12-11' and filetype == 'csv':
 if dataset == 'cv-corpus-8.0-2022-01-19' and filetype == 'txt':
     for filename in ['train.txt', 'dev.txt', 'test.txt']:
         textfile = os.path.join('templates/speech_recognition/LM/data/cv-corpus-8.0-2022-01-19', filename)
-        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
+        word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='text')
         print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
         print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
 
@@ -142,15 +186,16 @@ if dataset == 'cv-corpus-8.0-2022-01-19' and filetype == 'txt':
 if dataset == 'cv-corpus-8.0-2022-01-19' and filetype == 'csv':
     for filename in ['train.csv', 'dev.csv', 'test.csv']:
         textfile = os.path.join('recipes/CommonVoice/exp/CommonVoice/cv-corpus-8.0-2022-01-19', filename)
-        word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='csv')
+        word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='csv')
         print('{}: alphabet size: {}'.format(textfile, len(char_dict.keys())))
         print('{}: {} words, {} characters'.format(textfile, nwords, ncharacters))
 
-# generate 'words.csv' and 'chars.csv' from 'all.txt' for frf_asr002
+# generate 'words.csv' and 'chars.csv' from 'all.txt' for OTS dataset
 # pre-requisite 'all.txt' is generated from extract_text.py
 textfile = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'all.txt')
 assert os.path.isfile(textfile), '{} does not exist'.format(textfile)
-word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
+word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='text')
+print('{}: {} words, {} characters, {} utterances'.format(textfile, nwords, ncharacters, nutters))
 word_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'words.csv')
 write_dict_count(word_count_file, word_dict)
 print('#words: {}'.format(len(word_dict.keys())))
@@ -159,12 +204,17 @@ char_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(
 write_dict_count(char_count_file, char_dict, delimiter='\t')
 print('#letters: {}'.format(len(char_dict.keys())))
 print('wrote char dict to {}'.format(char_count_file))
+char2nutter_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'char2nutter.csv')
+write_dict_count(char2nutter_count_file, char2nutter_dict, delimiter='\t')
+print('#letters: {}'.format(len(char_dict.keys())))
+print('wrote char2nutter dict to {}'.format(char2nutter_count_file))
 
 # generate 'words.csv' and 'chars.csv' from 'all.txt' for CV dataset
 # pre-requisite 'all.txt' is generated from extract_text.py
 textfile = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'all.txt')
 assert os.path.isfile(textfile), '{} does not exist'.format(textfile)
-word_dict, char_dict, nwords, ncharacters = get_word_char(textfile, type='text')
+word_dict, char_dict, char2nutter_dict, nwords, ncharacters, nutters = get_word_char(textfile, type='text')
+print('{}: {} words, {} characters, {} utterances'.format(textfile, nwords, ncharacters, nutters))
 word_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'words.csv')
 write_dict_count(word_count_file, word_dict)
 print('#words: {}'.format(len(word_dict.keys())))
@@ -173,3 +223,7 @@ char_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(
 write_dict_count(char_count_file, char_dict, delimiter='\t')
 print('#letters: {}'.format(len(char_dict.keys())))
 print('wrote char dict to {}'.format(char_count_file))
+char2nutter_count_file = os.path.join('templates/speech_recognition/LM/data/{}'.format(dataset), 'char2nutter.csv')
+write_dict_count(char2nutter_count_file, char2nutter_dict, delimiter='\t')
+print('#letters: {}'.format(len(char_dict.keys())))
+print('wrote char2nutter dict to {}'.format(char2nutter_count_file))

@@ -25,6 +25,7 @@
 import os
 import csv
 import shutil
+import numpy as np
 
 def get_text(csv_path):
     lines = open(csv_path, 'r').readlines()
@@ -68,6 +69,7 @@ for csv_file in csv_files:
 
 # check current alphabet
 single_line = ' '.join(texts_all)
+words = single_line.split()
 characters = single_line.replace(' ', '')
 ncharacters = len(characters)
 char_dict = get_char_dict(characters)
@@ -79,18 +81,26 @@ print('\n'.join(['{}, {}'.format(i, letter) for (i,letter) in enumerate(letters)
 
 # setup the replacement tuples
 replacement_tuples = []
-replacement_tuples.append((letters[1] + letters[59], letters[27]))
-replacement_tuples.append((letters[5] + letters[59], letters[35]))
-replacement_tuples.append((letters[21] + letters[59], letters[51]))
-replacement_tuples.append((letters[15] + letters[60], letters[46]))
-replacement_tuples.append((letters[5] + letters[60], letters[36]))
-replacement_tuples.append((letters[1] + letters[61], letters[29]))
-replacement_tuples.append((letters[5] + letters[61], letters[37]))
-replacement_tuples.append((letters[9] + letters[61], letters[41]))
-replacement_tuples.append((letters[15] + letters[61], letters[47]))
-replacement_tuples.append((letters[21] + letters[61], letters[53]))
+replacement_tuples.append((letters[0] + letters[58], letters[26]))
+replacement_tuples.append((letters[4] + letters[58], letters[34]))
+replacement_tuples.append((letters[20] + letters[58], letters[50]))
+replacement_tuples.append((letters[14] + letters[59], letters[45]))
+replacement_tuples.append((letters[4] + letters[59], letters[35]))
+replacement_tuples.append((letters[0] + letters[60], letters[28]))
+replacement_tuples.append((letters[4] + letters[60], letters[36]))
+replacement_tuples.append((letters[8] + letters[60], letters[40]))
+replacement_tuples.append((letters[14] + letters[60], letters[46]))
+replacement_tuples.append((letters[20] + letters[60], letters[52]))
 # replacement_tuples.append((letters[3] + letters[62], letters[77]))
-replacement_tuples.append((letters[3] + letters[62], letters[82]))
+replacement_tuples.append((letters[2] + letters[61], letters[81]))
+
+replacement_valid_tuples = []
+for tpl in replacement_tuples:
+    double, single = tpl
+    words_double = sorted(set([word for word in words if double in word]))
+    words_single = [word.replace(double, single) for word in words_double]
+    words_exist = np.mean([1 if word in words else 0 for word in words_single])
+    replacement_valid_tuples.append((double, single, words_exist))
 
 for csv_file in csv_files:
 
@@ -105,8 +115,8 @@ for csv_file in csv_files:
     print('processing {} with {} entries ...'.format(csv_path, len(entries)))
     for tpl in replacement_tuples:
         for entry in entries:
-            letter_combined, letter_single = tpl
-            entry[-1] = entry[-1].replace(letter_combined, letter_single)
+            double, single = tpl
+            entry[-1] = entry[-1].replace(double, single)
 
     # backup the original csv file and write the new file with the same filename
     csv_path_old = csv_path.replace('.csv', '_old.csv')
@@ -126,6 +136,7 @@ for csv_file in csv_files:
 
 # check current alphabet
 single_line = ' '.join(texts_all)
+words = single_line.split()
 characters = single_line.replace(' ', '')
 ncharacters = len(characters)
 char_dict = get_char_dict(characters)

@@ -7,6 +7,8 @@ import os
 import glob
 from subprocess import PIPE, run
 
+# os.chdir('/Users/zhge/PycharmProjects/speechbrain/tools')
+
 dataset = 'FRF_ASR002' # 'FRF_ASR001', 'FRF_ASR002'
 data_root = '../templates/speech_recognition/data/ots_french/{}'.format(dataset)
 data_processed = os.path.join(data_root, 'Processed')

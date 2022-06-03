@@ -263,22 +263,20 @@ def create_csv(
 
         if language == "fr":
             # Replace J'y D'hui etc by J_ D_hui
-            # updated to match the French ASR tokenizer - zge
-            # words = words.replace("'", " ")
-            # words = words.replace("’", " ")
-            words = words.replace("’", "'")
+            words = words.replace("'", " ")
+            words = words.replace("’", " ")
 
         elif language == "ar":
             HAMZA = "\u0621"
             ALEF_MADDA = "\u0622"
             ALEF_HAMZA_ABOVE = "\u0623"
             letters = (
-                "ابتةثجحخدذرزسشصضطظعغفقكلمنهويءآأؤإئ"
+                "ابتةثجحخدذرزسشصضطظعغفقكلمنهويىءآأؤإئ"
                 + HAMZA
                 + ALEF_MADDA
                 + ALEF_HAMZA_ABOVE
             )
-            words = re.sub("[^" + letters + "]+", " ", words).upper()
+            words = re.sub("[^" + letters + " ]+", "", words).upper()
         elif language == "ga-IE":
             # Irish lower() is complicated, but upper() is nondeterministic, so use lowercase
             def pfxuc(a):

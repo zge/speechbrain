@@ -19,6 +19,7 @@ SAMPLERATE = 8000
 SEED = 1234
 RATIO = '8:1:1'
 
+# os.chdir('templates/speech_recognition/ASR')
 
 def prepare_frf_asr002(
     data_folder, ext, save_train, save_valid, save_test):

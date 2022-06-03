@@ -90,21 +90,25 @@ def read_text(annotation_file, filetype):
     return lines
 
 dataset = 'cv-corpus-8.0-2022-01-19'
-result_folder = '20220202_ASR-Fr-Pretrained'
-result_dir = os.path.join(Path.home(), 'OneDrive - Appen/results', result_folder)
-assert os.path.isdir(result_dir), '{} does not exist'.format(result_dir)
-char_file_asr = os.path.join(result_dir, dataset, 'CRDNN', 'alphabets', 'token_char_crdnn.csv')
+# result_folder = '20220202_ASR-Fr-Pretrained'
+# result_dir = os.path.join(Path.home(), 'OneDrive - Appen/results', result_folder)
+# assert os.path.isdir(result_dir), '{} does not exist'.format(result_dir)
+# char_file_asr = os.path.join(result_dir, dataset, 'CRDNN', 'alphabets', 'token_char_crdnn.csv')
+#
+# result_folder = '20220209_Ref-Hyp_TextInspection'
+# result_dir = os.path.join(Path.home(), 'OneDrive - Appen/results', result_folder)
+# assert os.path.isdir(result_dir), '{} does not exist'.format(result_dir)
+# char_file_cv = os.path.join(result_dir, 'chars_corpus_8.0-2022-01-19.csv')
+# char_file_ots = os.path.join(result_dir, 'chars_frf_asr001.csv')
 
-result_folder = '20220209_Ref-Hyp_TextInspection'
-result_dir = os.path.join(Path.home(), 'OneDrive - Appen/results', result_folder)
-assert os.path.isdir(result_dir), '{} does not exist'.format(result_dir)
-char_file_cv = os.path.join(result_dir, 'chars_corpus_8.0-2022-01-19.csv')
-char_file_ots = os.path.join(result_dir, 'chars_frf_asr001.csv')
+root_dir = '../templates/speech_recognition/LM/data'
+char_file_cv = os.path.join(root_dir, 'cv-corpus-8.0-2022-01-19', 'chars.csv')
+char_file_ots = os.path.join(root_dir, 'frf_asr001', 'chars.csv')
 
-letters_asr = get_letter(char_file_asr)
+# letters_asr = get_letter(char_file_asr)
 letters_cv = get_letter(char_file_cv)
 letters_ots = get_letter(char_file_ots)
-print('#letters in {}: {}'.format(os.path.basename(char_file_asr), len(letters_asr)))
+# print('#letters in {}: {}'.format(os.path.basename(char_file_asr), len(letters_asr)))
 print('#letters in {}: {}'.format(os.path.basename(char_file_cv), len(letters_cv)))
 print('#letters in {}: {}'.format(os.path.basename(char_file_ots), len(letters_ots)))
 
@@ -129,6 +133,7 @@ letters_cv_not_asr = [l for l in letters_cv if l not in letters_asr]
 print('#letters in cv but not in asr: {}'.format(len(letters_cv_not_asr)))
 
 # sub-task 1: find out the total duration of utterances with uncommon letters (letters_cv_not_ots)
+
 for cat in ['train', 'dev', 'test']:
     csv_file = '../recipes/CommonVoice/exp/CommonVoice/{}/{}.csv'.format(dataset, cat)
     nutters, nutters_sel, dur, dur_sel = find_sel(csv_file, letters_cv_not_ots)

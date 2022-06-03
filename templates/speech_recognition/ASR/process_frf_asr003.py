@@ -29,8 +29,10 @@ audiofiles = sorted(glob.glob(os.path.join(wav_dir, '**', '*.wav'), recursive=Tr
 naudiofiles = len(audiofiles)
 textfiles = sorted(glob.glob(os.path.join(txt_dir, '*.trl')))
 ntextfiles = len(textfiles)
-print('# of tesxt files: {}'.format(ntextfiles))
+print('{} audio files in {}'.format(naudiofiles, wav_dir))
+print('{} text files in {}'.format(ntextfiles, txt_dir))
 
+letters = ["_", "-", "’", "'"] # decide to replace "'" and "’" with space
 for i, textfile in enumerate(textfiles):
 
     print('processing text file {}/{}: {} ...'.format(i+1, ntextfiles, textfile))
@@ -49,6 +51,15 @@ for i, textfile in enumerate(textfiles):
         audiofile = utterfile.replace('.txt', '.wav')
         assert os.path.isfile(audiofile), 'check {}!'.format(audiofile)
         text = process_text(text)
+
+        letter_count = {}
+        for letter in letters:
+            letter_count[letter] = sum([1 if letter in text else 0 for c in text])
+        print('{} replacement in {}'.format(letter_count, utterfile))
+
+        for letter in letters:
+            text = text.replace(letter, ' ')
+
         open(utterfile, 'w').writelines([text.upper()])
 
 
@@ -60,6 +71,7 @@ assert naudiofiles == nutterfiles, 'audio and text files not match!'
 # filter files by #words and max duration
 nwords_min = 3
 dur_max = 10
+
 for i, audiofile in enumerate(audiofiles):
 
     print('processing wav file {}/{}: {} ...'.format(i+1, naudiofiles, audiofile))

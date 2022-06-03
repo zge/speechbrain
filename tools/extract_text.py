@@ -2,15 +2,20 @@
 Extract texts from filelist files
 The format of filelist can be either json or csv
 
+Output files:
+  - '../templates/speech_recognition/LM/data/<dataset>/{train,dev,test}.txt'
+  - '../templates/speech_recognition/LM/data/<dataset>/all.txt'
+
 Zhenhao Ge, 2022-01-26
 """
 
 
 import os
 
+# os.chdir('/Users/zhge/PycharmProjects/speechbrain/tools')
+
 # example 1
-# dataset = 'frf_asr002'
-dataset = 'frf_asr003'
+dataset = 'frf_asr003' # 'frf_asr001', 'frf_asr002', 'frf_asr003'
 cats = ['train', 'valid', 'test']
 flist_dir = os.path.join('../templates/speech_recognition/filelists/ots_french', dataset)
 text_dir = os.path.join('../templates/speech_recognition/LM/data', dataset)
@@ -102,4 +107,10 @@ single_line = ' '.join([line.rstrip() for line in lines])
 letters = sorted(set(single_line.replace(' ', '')))
 for i, letter in enumerate(letters):
     print('{}: {}'.format(i, letter))
-assert len(letters) == 39, "# of letters should be 39!"
+
+# print #letters
+# CV8.0: 83 for original, 80 after accented letter removal
+# FRF_ASR001: 38 for original
+# FRF_ASR002: 40 for original
+# FRF_ASR003: 39 for original
+print('# of letters: {}'.format(len(letters)))

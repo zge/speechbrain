@@ -45,6 +45,10 @@ def process_text(text):
     # remove redundant spaces
     text2 = ' '.join(text2.strip().split())
 
+    # remove text with "+" inside
+    if '+' in text2:
+        text2 = ''
+
     # sanity check (should not contain following symbols)
     symbols = ['{', '}', '[', ']', '<', '>', '(', ')', '~', '/', '%']
     for symbol in symbols:
@@ -89,17 +93,24 @@ def extract_segment(textfile):
 
     nlines = len(lines)
 
+    letter_count_all = {l: 0 for l in letters}
     segments = []
     for i in range(0,nlines-2,2):
         start = float(lines[i].rstrip()[1:-1])
         text = lines[i+1].rstrip()
         text2 = process_text(text)
+
+        letter_count = {}
+        for letter in letters:
+            letter_count[letter] = sum([1 if letter in text2 else 0 for c in text2])
+            letter_count_all[letter] += letter_count[letter]
+
         for letter in letters:
             text2 = text2.replace(letter, ' ')
         end = float(lines[i+2].rstrip()[1:-1])
         segments.append((start, end, text, text2))
 
-    return segments
+    return segments, letter_count_all
 
 def tuple2csv(tuples, csvname='filename.csv', colname=[], encoding='utf-8', verbose=True):
     with open(csvname, 'w', newline='', encoding=encoding) as f:
@@ -123,8 +134,7 @@ print('{} of audio files in {}'.format(naudiofiles, in_dir))
 
 nwords_min = 3 # min # of words for a valid segment
 dur_max = 10 # max duration for utterance (longer utterance is not good for alignment)
-# letters = ["_", "-", "'"]
-letters = ["_", "-"] # decide not to replace "'" with space
+letters = ["_", "-", "’", "'"] # decide to replace "'" and "’" with space
 
 # # take a look all text files at once
 # textfiles = sorted(glob.glob(os.path.join(in_dir, '**', '*.txt'), recursive=True))
@@ -141,8 +151,9 @@ for i, audiofile in enumerate(audiofiles):
     assert os.path.isfile(textfile), '{} does not exist!'
 
     # get segments
-    segments = extract_segment(textfile)
+    segments, letter_count = extract_segment(textfile)
     nsegments = len(segments)
+    print('{} replacement in {}'.format(letter_count, audiofile))
     print('{} segments in {}'.format(nsegments, audiofile))
 
     # get audio name

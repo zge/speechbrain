@@ -36,8 +36,10 @@
 #
 # Zhenhao Ge, 2022-02-16
 
-import os
+import os, sys
 import glob
+sys.path.append(os.getcwd())
+from utils import tuple2csv
 
 # dataset = 'cv-corpus-6.1-2020-12-11'
 dataset = 'cv-corpus-8.0-2022-01-19'
@@ -46,10 +48,11 @@ letter_file = '../templates/speech_recognition/LM/data/{}/chars.{}'.format(datas
 assert os.path.isfile(letter_file), '{} does not exist!'.format(letter_file)
 print('letter file: {}'.format(letter_file))
 filelist_dir = '../templates/speech_recognition/filelists/CommonVoice/{}'.format(dataset)
-sublist_files = sorted(glob.glob(os.path.join(filelist_dir, 'subset_by_letter', '*.{}'.format(filetype))))
+sublist_files = sorted(glob.glob(os.path.join(filelist_dir, 'subset_by_letter', 'v1', '*.{}'.format(filetype))))
+sublist_files = [f for f in sublist_files if 'tuple' not in f]
 print('# of sublist files: {}'.format(len(sublist_files)))
 
-idx_range = [59,63]
+idx_range = [58,62]
 sublist_files_sel = sublist_files[idx_range[0]:idx_range[1]]
 print('selected sublist files:')
 print('\n'.join([' - {}'.format(os.path.basename(f)) for f in sublist_files_sel]))
@@ -85,9 +88,12 @@ for i,f in enumerate(sublist_files_sel):
                 else:
                     subword = 'na'
                 tpl = (j, k, l, subword, word, text)
-                output = ('line {}'.format(j), 'word {}'.format(k), 'index {}'.format(l),
-                          subword, word, text)
-                print(', '.join(output))
+                # output = ('line {}'.format(j), 'word {}'.format(k), 'index {}'.format(l),
+                #           subword, word, text)
+                # print(', '.join(output))
                 tuple_list.append(tpl)
+    csvpath = f.replace('.csv', '_tuple.csv')
+    header = ['line-idx', 'word-idx', 'letter-idx', 'subword', 'word', 'text']
+    tuple2csv(tuple_list, csvpath, colname=header)
     subwords = sorted(set([tpl[3] for tpl in tuple_list]))
     print('subwords: {}'.format(subwords))

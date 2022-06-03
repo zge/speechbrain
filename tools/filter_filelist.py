@@ -7,6 +7,8 @@ import os
 import csv
 import shutil
 
+# os.chdir('/Users/zhge/PycharmProjects/speechbrain/tools')
+
 def get_letter(char_file):
     lines = open(char_file, 'r').readlines()
     lines = lines[1:]
@@ -50,22 +52,24 @@ char_file_standard = os.path.join('../templates/speech_recognition/LM/data',
 assert os.path.isfile(char_file_standard), '{} does not exist'.format(char_file_standard)
 
 # get letter files
-# dataset_extra = 'cv-corpus-8.0-2022-01-19'
+dataset_extra = 'cv-corpus-8.0-2022-01-19'
 # dataset_extra = 'frf_asr002'
-dataset_extra = 'frf_asr003'
+# dataset_extra = 'frf_asr003'
 char_file_extra = os.path.join('../templates/speech_recognition/LM/data',
                            dataset_extra, 'chars.csv')
 assert os.path.isfile(char_file_extra), '{} does not exsit'.format(char_file_extra)
 
 # set filelist dir
-# filelist_dir = '../recipes/CommonVoice/exp/CommonVoice/{}/'.format(dataset_extra)
-filelist_dir = '../templates/speech_recognition/filelists/ots_french/{}/'.format(dataset_extra)
+filelist_dir = '../recipes/CommonVoice/exp/CommonVoice/{}/'.format(dataset_extra)
+# filelist_dir = '../templates/speech_recognition/filelists/ots_french/{}/'.format(dataset_extra)
 assert os.path.isdir(filelist_dir), '{} does not exist!'.format(filelist_dir)
 
 letters_extra = get_letter(char_file_extra)
 letters_standard = get_letter(char_file_standard)
-print('#letters in {}: {}'.format(os.path.basename(char_file_extra), len(letters_extra)))
-print('#letters in {}: {}'.format(os.path.basename(char_file_standard), len(letters_standard)))
+print('#letters in the dataset with extra letters {}: {}'.format(
+    os.path.basename(char_file_extra), len(letters_extra)))
+print('#letters in the dataset with standard letters {}: {}'.format(
+    os.path.basename(char_file_standard), len(letters_standard)))
 
 # find common letters in both standard and extra
 letters_common = [l for l in letters_standard if l in letters_extra]
@@ -75,8 +79,8 @@ print('#letters in both standard and extra: {}'.format(len(letters_common)))
 letters_extra_not_standard = [l for l in letters_extra if l not in letters_standard]
 print('#letters in extra but not in standard: {}'.format(len(letters_extra_not_standard)))
 
-# csv_files = ['train.csv', 'dev.csv', 'test.csv']
-csv_files = ['train.csv', 'valid.csv', 'test.csv']
+csv_files = ['train.csv', 'dev.csv', 'test.csv']
+# csv_files = ['train.csv', 'valid.csv', 'test.csv']
 for csv_file in csv_files:
 
     # get header and entries from the csv file
