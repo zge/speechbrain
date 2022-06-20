@@ -25,9 +25,7 @@ def prepare_frf_asr001(
     data_folder, ext, save_train, save_valid, save_test):
 
     wav_list = sorted(get_all_files(data_folder, match_and=[".wav"]))
-    trans_list = sorted(get_all_files(data_folder, match_and=[".txt"]))
-    trans_list = [f for f in trans_list if '_orig' not in f]
-    assert len(wav_list) == len(trans_list), "audio and text does not match!"
+    wav_list = sorted([f for f in wav_list if 'Filtered' not in f])
 
     # randomize wav list
     random.seed(SEED)

@@ -109,7 +109,7 @@ def write_dict_count(csvfile, dct, delimiter=',',
 
 # specify the dataset
 # dataset = 'cv-corpus-8.0-2022-01-19' # 'cv-corpus-6.1-2020-12-11', 'cv-corpus-8.0-2022-01-19'
-dataset = 'frf_asr003' # 'frf_asr001', 'frf_asr002', 'frf_asr003'
+dataset = 'frf_asr002' # 'frf_asr001', 'frf_asr002', 'frf_asr003'
 # specify file type (txt, csv, or json)
 filetype = 'txt'
 

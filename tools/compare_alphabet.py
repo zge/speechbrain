@@ -10,6 +10,7 @@ from pathlib import Path
 import glob
 from shutil import copyfile
 
+# os.chdir('/Users/zhge/PycharmProjects/speechbrain/tools')
 sys.path.append(os.getcwd())
 from utils import csv2dict
 
@@ -18,7 +19,6 @@ def get_letter(char_file):
     lines = lines[1:]
     letters = [line.rstrip().split('\t')[1] for line in lines]
     return letters
-
 
 def find_sel(csv_file, letters):
     dict_list = csv2dict(csv_file)
@@ -89,7 +89,8 @@ def read_text(annotation_file, filetype):
 
     return lines
 
-dataset = 'cv-corpus-8.0-2022-01-19'
+dataset_cv = 'cv-corpus-8.0-2022-01-19'
+dataset_ots = 'frf_asr001'
 # result_folder = '20220202_ASR-Fr-Pretrained'
 # result_dir = os.path.join(Path.home(), 'OneDrive - Appen/results', result_folder)
 # assert os.path.isdir(result_dir), '{} does not exist'.format(result_dir)
@@ -102,8 +103,8 @@ dataset = 'cv-corpus-8.0-2022-01-19'
 # char_file_ots = os.path.join(result_dir, 'chars_frf_asr001.csv')
 
 root_dir = '../templates/speech_recognition/LM/data'
-char_file_cv = os.path.join(root_dir, 'cv-corpus-8.0-2022-01-19', 'chars.csv')
-char_file_ots = os.path.join(root_dir, 'frf_asr001', 'chars.csv')
+char_file_cv = os.path.join(root_dir, dataset_cv, 'chars.csv')
+char_file_ots = os.path.join(root_dir, dataset_ots, 'chars.csv')
 
 # letters_asr = get_letter(char_file_asr)
 letters_cv = get_letter(char_file_cv)
@@ -120,29 +121,28 @@ print('#letters in both ots and cv: {}'.format(len(letters_cv_ots)))
 letters_cv_not_ots = [l for l in letters_cv if l not in letters_ots]
 print('#letters in cv but not in ots: {}'.format(len(letters_cv_not_ots)))
 
-# find common letters in both CV and ASR tokenizer
-letters_cv_asr = [l for l in letters_cv if l in letters_asr]
-print('#letters in both cv and asr: {}'.format(len(letters_cv_asr)))
+# # find common letters in both CV and ASR tokenizer
+# letters_cv_asr = [l for l in letters_cv if l in letters_asr]
+# print('#letters in both cv and asr: {}'.format(len(letters_cv_asr)))
 
-# find letters in ASR tokenizer but not in CV
-letters_asr_not_cv = [l for l in letters_asr if l not in letters_cv]
-print('#letters in asr but not in CV: {}'.format(len(letters_asr_not_cv)))
+# # find letters in ASR tokenizer but not in CV
+# letters_asr_not_cv = [l for l in letters_asr if l not in letters_cv]
+# print('#letters in asr but not in CV: {}'.format(len(letters_asr_not_cv)))
 
-# find letters in CV but not in ASR tokenizer
-letters_cv_not_asr = [l for l in letters_cv if l not in letters_asr]
-print('#letters in cv but not in asr: {}'.format(len(letters_cv_not_asr)))
+# # find letters in CV but not in ASR tokenizer
+# letters_cv_not_asr = [l for l in letters_cv if l not in letters_asr]
+# print('#letters in cv but not in asr: {}'.format(len(letters_cv_not_asr)))
 
 # sub-task 1: find out the total duration of utterances with uncommon letters (letters_cv_not_ots)
-
 for cat in ['train', 'dev', 'test']:
-    csv_file = '../recipes/CommonVoice/exp/CommonVoice/{}/{}.csv'.format(dataset, cat)
+    csv_file = '../recipes/CommonVoice/exp/CommonVoice/{}/{}.csv'.format(dataset_cv, cat)
     nutters, nutters_sel, dur, dur_sel = find_sel(csv_file, letters_cv_not_ots)
     print('{}/{} utterances ({:.3f} hr. /{:.3f} hr.) in {} with uncommon letters'.format(
         nutters_sel, nutters, dur_sel/3600, dur/3600, os.path.basename(csv_file)))
 
 # sub-task 2: backup utterance subsets for all uncommon letters (letters_cv_not_ots)
 filelist_dir = '../templates/speech_recognition/filelists/CommonVoice/{}/subset_by_letter'.format(
-    dataset)
+    dataset_cv)
 assert os.path.isdir(filelist_dir), 'dir: {} does not exist!'.format(filelist_dir)
 filelists = sorted(glob.glob(os.path.join(filelist_dir, '*.csv')))
 filelist_uncommon_dir = os.path.join(filelist_dir, 'uncommon')

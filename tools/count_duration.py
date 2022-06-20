@@ -4,9 +4,14 @@ import glob
 from pathlib import Path
 from subprocess import PIPE, run
 
+# os.chdir('/Users/zhge/PycharmProjects/speechbrain/tools')
+
 root_dir = '../templates/speech_recognition/filelists'
+# root_dir = '../recipes/CommonVoice/exp'
+
 # dataset = 'mini-librispeech'
 # dataset = 'ots_french/frf_asr001'
+# dataset = 'ots_french/frf_asr002'
 dataset = 'ots_french/frf_asr003'
 # dataset = 'CommonVoice/cv-corpus-8.0-2022-01-19'
 
@@ -50,17 +55,28 @@ def get_dur_from_list(listfile):
 
     return duration_hr
 
-
 # json_train = os.path.join(root_dir, dataset, 'train.json')
-# json_valid = os.path.join(root_dir, dataset, 'valid.json')
+# if 'cv-corpus' in dataset:
+#     json_valid = os.path.join(root_dir, dataset, 'dev.json')
+# else:
+#     json_valid = os.path.join(root_dir, dataset, 'valid.json')
 # json_test = os.path.join(root_dir, dataset, 'test.json')
-# duration_hr_train = get_duration_hr(json_train)
-# duration_hr_valid = get_duration_hr(json_valid)
-# duration_hr_test = get_duration_hr(json_test)
+#
+# duration_hr_train = get_dur_from_list(json_train)
+# duration_hr_valid = get_dur_from_list(json_valid)
+# duration_hr_test = get_dur_from_list(json_test)
 
 csv_train = os.path.join(root_dir, dataset, 'train.csv')
-csv_valid = os.path.join(root_dir, dataset, 'valid.csv')
+if 'cv-corpus' in dataset:
+    csv_valid = os.path.join(root_dir, dataset, 'dev.csv')
+else:
+    csv_valid = os.path.join(root_dir, dataset, 'valid.csv')
 csv_test = os.path.join(root_dir, dataset, 'test.csv')
+
+assert os.path.isfile(csv_train), 'file: {} does not exist!'.format(csv_train)
+assert os.path.isfile(csv_valid), 'file: {} does not exist!'.format(csv_valid)
+assert os.path.isfile(csv_test), 'file: {} does not exist!'.format(csv_test)
+
 duration_hr_train = get_dur_from_list(csv_train)
 duration_hr_valid = get_dur_from_list(csv_valid)
 duration_hr_test = get_dur_from_list(csv_test)

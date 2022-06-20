@@ -15,7 +15,7 @@ import os
 # os.chdir('/Users/zhge/PycharmProjects/speechbrain/tools')
 
 # example 1
-dataset = 'frf_asr003' # 'frf_asr001', 'frf_asr002', 'frf_asr003'
+dataset = 'frf_asr002' # 'frf_asr001', 'frf_asr002', 'frf_asr003'
 cats = ['train', 'valid', 'test']
 flist_dir = os.path.join('../templates/speech_recognition/filelists/ots_french', dataset)
 text_dir = os.path.join('../templates/speech_recognition/LM/data', dataset)
@@ -25,7 +25,9 @@ filetype = 'csv' # 'json' or 'csv'
 # cats = ['train', 'dev', 'test']
 # # flist_dir = '../templates/speech_recognition/filelists/CommonVoice/cv-corpus-6.1-2020-12-11'
 # # text_dir = '../templates/speech_recognition/LM/data/cv-corpus-6.1-2020-12-11'
-# flist_dir = '../templates/speech_recognition/filelists/CommonVoice/cv-corpus-8.0-2022-01-19'
+# # flist_dir = '../templates/speech_recognition/filelists/CommonVoice/cv-corpus-8.0-2022-01-19'
+# # text_dir = '../templates/speech_recognition/LM/data/cv-corpus-8.0-2022-01-19'
+# flist_dir = '../recipes/CommonVoice/exp/CommonVoice/cv-corpus-8.0-2022-01-19/sb'
 # text_dir = '../templates/speech_recognition/LM/data/cv-corpus-8.0-2022-01-19'
 # os.makedirs(text_dir, exist_ok=True)
 # filetype = 'csv'
@@ -111,6 +113,6 @@ for i, letter in enumerate(letters):
 # print #letters
 # CV8.0: 83 for original, 80 after accented letter removal
 # FRF_ASR001: 38 for original
-# FRF_ASR002: 40 for original
+# FRF_ASR002: 39 for original
 # FRF_ASR003: 39 for original
 print('# of letters: {}'.format(len(letters)))

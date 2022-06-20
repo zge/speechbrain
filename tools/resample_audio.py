@@ -21,7 +21,8 @@ data_resampled = os.path.join(data_root, 'Resampled')
 sr = 16000
 
 # get all input audio files
-audio_files = glob.glob(os.path.join(data_processed, '**', '*.wav'), recursive=True)
+audio_files = sorted(glob.glob(os.path.join(data_processed, '**', '*.wav'), recursive=True))
+audio_files = sorted([f for f in audio_files if 'Filtered' not in f])
 nfiles = len(audio_files)
 print('{} files in {}'.format(nfiles, data_processed))
 

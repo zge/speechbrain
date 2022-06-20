@@ -18,14 +18,14 @@ import glob
 sys.path.append(os.getcwd())
 from utils import concat_csv, csv2dict, dict2tuple, tuple2csv
 
-# # option 1 (OTS dataset)
-# dataset = 'ots_french/frf_asr002' # 'ots_french/frf_asr001', 'ots_french/frf_asr002', 'ots_french/frf_asr003'
-# filetype = 'csv'
-
-# option 2 (CV dataset)
-# dataset = 'CommonVoice/cv-corpus-6.1-2020-12-11'
-dataset = 'CommonVoice/cv-corpus-8.0-2022-01-19'
+# option 1 (OTS dataset)
+dataset = 'ots_french/frf_asr003' # 'ots_french/frf_asr001', 'ots_french/frf_asr002', 'ots_french/frf_asr003'
 filetype = 'csv'
+
+# # option 2 (CV dataset)
+# # dataset = 'CommonVoice/cv-corpus-6.1-2020-12-11'
+# dataset = 'CommonVoice/cv-corpus-8.0-2022-01-19'
+# filetype = 'csv'
 
 # set file list
 filelist_path = '../templates/speech_recognition/filelists/{}'.format(dataset)
