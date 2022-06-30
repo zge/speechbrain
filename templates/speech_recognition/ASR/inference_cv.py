@@ -24,7 +24,7 @@ listfile = '../filelists/{}/{}/test.csv'.format(dataclass, dataset)
 assert os.path.isfile(listfile), '{} does not exist!'.format(listfile)
 data_root = '../data/{}/{}/fr/clips'.format(dataclass, dataset)
 data_resampled = '../data/{}/{}/fr/resampled'.format(dataclass, dataset)
-data_output = 'data'
+data_output = 'inference_output'
 dur_lim = [0, float('inf')] # [5,10], or [0, float('inf')]
 seed = 1234
 num_sel = 100 # 100 for subset or 15659 for whole set
@@ -172,7 +172,6 @@ for i in range(0, num_sel, batch_size):
     print('decoding file {} - {} (total {}) ...'.format(i, idx_end, num_sel))
 
     # get audio files in a batch
-
     audio_files = [json_dict_sel[uttid]['wav'].replace(data_root, data_resampled) \
                    for uttid,dur in uttid_dur_pairs_sorted[i:idx_end]]
     # audio_files = [json_dict_sel[uttid]['wav'] \

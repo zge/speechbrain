@@ -37,7 +37,7 @@ def tuple2csv(tuples, csvname='filename.csv', colname=[], verbose=True):
     if verbose:
         print('{} saved!'.format(csvname))
 
-file_wer = os.path.join(dir_result, 'wer_test_cv_with_ots_20220514.txt')
+file_wer = os.path.join(dir_result, 'wer_test_cv_with_ots_20220624.txt')
 assert os.path.isfile(file_wer), 'file {} does not exist!'.format(file_wer)
 
 # extract the lines with wers
