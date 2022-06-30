@@ -10,7 +10,7 @@ MODEL_NAME="cv8.0_with_ots_fr_seq2seq_ctc_attention_now2v_nosmooth_sb"
 
 source_dir=${RESULT_DIR}/${EC2}/${MODEL_NAME}
 filelist="../filelists/cv_with_ots/valid.lst"
-data_root="/Users/zhge/Data"
+data_root="../data"
 num_files=15
 batch_size=3
 
