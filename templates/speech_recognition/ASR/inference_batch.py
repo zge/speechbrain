@@ -28,14 +28,14 @@ def batch_docode(audio_files):
 
     return predicted_words, predicted_tokens
 
-def write_result(csvfile, lines, header=None):
+def write_csv(csvfile, lines, header=None):
     # write the result csv
     with open(csvfile, 'w', newline = '') as f:
         write = csv.writer(f)
         if header:
             write.writerow(header)
         write.writerows(lines)
-    print('wrote results in {}'.format(csvfile))
+    print('wrote lines in {}'.format(csvfile))
 
 def parse_args():
     usage = 'usage: inference with batch'
@@ -149,6 +149,10 @@ if __name__ == '__main__':
         json_dict[uttid] = {'source': audiofile, 'resampled': audiofile_resampled,
                                 'duration': dur}
 
+    # # generate filelist for converted audio files
+    # tmp_flist = [f.replace(tmp_dir, '$data_root') for f in audiofiles_resampled]
+    # open('demo_100.lst', 'w').writelines('\n'.join(tmp_flist))
+
     # get the pairs of utterance ID and duration
     uttid_dur_pairs = [(k, json_dict[k]['duration']) for k in sorted(json_dict.keys())]
     uttid_dur_pairs_sorted = sorted(uttid_dur_pairs, key = lambda pair: pair[1], reverse=True)
@@ -189,4 +193,4 @@ if __name__ == '__main__':
     dur_total = sum([json_dict[k]['duration'] for k in json_dict.keys()])
     output_csv = os.path.join(out_dir, '{}_{}files_{:.2f}secs.csv'.format(
         source_name, num_files, dur_total))
-    write_result(output_csv, lines, header)
+    write_csv(output_csv, lines, header)

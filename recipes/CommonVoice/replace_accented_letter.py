@@ -57,6 +57,7 @@ def tuple2csv(tuples, csvname='filename.csv', colname=[], verbose=True):
 
 # data_dir = 'exp/CommonVoice/cv-corpus-6.1-2020-12-11/'
 data_dir = 'exp/CommonVoice/cv-corpus-8.0-2022-01-19/'
+# data_dir = '../../templates/speech_recognition/filelists/ots_french/frf_asr001/'
 assert os.path.isdir(data_dir), '{} does not exist!'.format(data_dir)
 
 # get all texts

@@ -27,7 +27,7 @@
 #     + (letters[15] + letters[61], letters[47]) # accented O
 #     + (letters[21] + letters[61], letters[53]) # accented U
 #  - for letters[62] (̧')
-#     + (letters[3] + letters[62], letters[77]) # accented C
+#     + (letters[3] + letters[62], letters[82]) # accented C
 #
 # Pre-requisites:
 #  - run `extract_text.py` to generate `{train,dev,test}.txt`
@@ -38,6 +38,8 @@
 
 import os, sys
 import glob
+
+# os.chdir('tools')
 sys.path.append(os.getcwd())
 from utils import tuple2csv
 
@@ -45,6 +47,7 @@ from utils import tuple2csv
 dataset = 'cv-corpus-8.0-2022-01-19'
 filetype = 'csv'
 letter_file = '../templates/speech_recognition/LM/data/{}/chars.{}'.format(dataset, filetype)
+# letter_file = '../templates/speech_recognition/LM/data/{}/old/chars.{}'.format(dataset, filetype)
 assert os.path.isfile(letter_file), '{} does not exist!'.format(letter_file)
 print('letter file: {}'.format(letter_file))
 filelist_dir = '../templates/speech_recognition/filelists/CommonVoice/{}'.format(dataset)
@@ -53,6 +56,7 @@ sublist_files = [f for f in sublist_files if 'tuple' not in f]
 print('# of sublist files: {}'.format(len(sublist_files)))
 
 idx_range = [58,62]
+# idx_range = [59,63] # if "'" is the first letter in letters (index 0)
 sublist_files_sel = sublist_files[idx_range[0]:idx_range[1]]
 print('selected sublist files:')
 print('\n'.join([' - {}'.format(os.path.basename(f)) for f in sublist_files_sel]))
@@ -67,6 +71,7 @@ print('# of letters: {}'.format(nletters))
 
 # show the accented letters with their indices
 print([(i, letter) for i, letter in enumerate(letters)][idx_range[0]:idx_range[1]])
+print([(i, letter) for i, letter in enumerate(letters_no_quote)])
 
 letters_accent = letters[idx_range[0]:idx_range[1]]
 for i,f in enumerate(sublist_files_sel):
