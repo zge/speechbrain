@@ -194,4 +194,6 @@ if __name__ == '__main__':
     dur_total = sum([json_dict[k]['duration'] for k in json_dict.keys()])
     output_csv = os.path.join(out_dir, '{}_{}files_{:.2f}secs.csv'.format(
         source_name, num_files, dur_total))
+    if os.path.isfile(output_csv):
+        os.remove(output_csv)
     write_csv(output_csv, lines, header)
