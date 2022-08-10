@@ -144,7 +144,8 @@ if __name__ == '__main__':
             cmd = 'sox {} -r {} {}'.format(audiofile, sr, audiofile_resampled)
             output = run(cmd, shell=True, stdout=PIPE, stderr=PIPE).stdout
         else:
-            copyfile(audiofile, audiofile_resampled)
+            if not os.path.isfile(audiofile_resampled):
+                copyfile(audiofile, audiofile_resampled)
         audiofiles_resampled.append(audiofile_resampled)
         json_dict[uttid] = {'source': audiofile, 'resampled': audiofile_resampled,
                                 'duration': dur}
