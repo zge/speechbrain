@@ -18,11 +18,15 @@ train_log: results/cv_with_ots_fr_seq2seq_ctc_attention_now2v_nosmooth/train_log
 
 # Data files
 data_folder: data
+# data_folder: s3://zge-exp/data/tiny
 accented_letters: true
 language: fr # use 'it' for Italian, 'rw' for Kinyarwanda, 'en' for english
-train_csv: ../../templates/speech_recognition/filelists/cv_with_ots/train_tiny.csv
-valid_csv: ../../templates/speech_recognition/filelists/cv_with_ots/valid_tiny.csv
-test_csv: ../../templates/speech_recognition/filelists/cv_with_ots/test_tiny.csv
+# train_csv: ../../templates/speech_recognition/filelists/cv_with_ots/old/train_tiny.csv
+# valid_csv: ../../templates/speech_recognition/filelists/cv_with_ots/old/valid_tiny.csv
+# test_csv: ../../templates/speech_recognition/filelists/cv_with_ots/old/test_tiny.csv
+train_csv: s3://zge-exp/filelists/cv_with_ots/old/train_tiny.csv
+valid_csv: s3://zge-exp/filelists/cv_with_ots/old/valid_tiny.csv
+test_csv: s3://zge-exp/filelists/cv_with_ots/old/test_tiny.csv
 skip_prep: true # Skip data preparation
 
 # We remove utterance slonger than 10s in the train/dev/test sets as

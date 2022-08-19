@@ -20,6 +20,7 @@ import time
 import torchaudio
 import json
 import re
+import boto3
 from speechbrain.utils.torch_audio_backend import check_torchaudio_backend
 
 check_torchaudio_backend()
@@ -123,42 +124,83 @@ def load_data_csv(csv_path, replacements={}):
     >>> data["utt1"]["wav_path"]
     '/home/utt1.wav'
     """
+    
+    if csv_path[:5] == 's3://':
+        with smart_open(csv_path, newline="") as csvfile:
 
-    with open(csv_path, newline="") as csvfile:
-        result = {}
-        reader = csv.DictReader(csvfile, skipinitialspace=True)
-        variable_finder = re.compile(r"\$([\w.]+)")
-        for row in reader:
-            # ID:
-            try:
-                data_id = row["ID"]
-                del row["ID"]  # This is used as a key in result, instead.
-            except KeyError:
-                raise KeyError(
-                    "CSV has to have an 'ID' field, with unique ids"
-                    " for all data points"
-                )
-            if data_id in result:
-                raise ValueError(f"Duplicate id: {data_id}")
-            # Replacements:
-            for key, value in row.items():
+            keys = csvfile.readline().decode('utf-8').rstrip().split(',')
+
+            result = {}
+            variable_finder = re.compile(r"\$([\w.]+)")
+
+            for i, line in enumerate(csvfile):
+                values = line.decode('utf-8').rstrip().split(',')
+                row = {k:v for k,v in zip(keys, values)}
+
+                # ID:
                 try:
-                    row[key] = variable_finder.sub(
-                        lambda match: str(replacements[match[1]]), value
-                    )
+                    data_id = row["ID"]
+                    del row["ID"]  # This is used as a key in result, instead.
                 except KeyError:
                     raise KeyError(
-                        f"The item {value} requires replacements "
-                        "which were not supplied."
+                        "CSV has to have an 'ID' field, with unique ids"
+                        " for all data points"
                     )
-            # Duration:
-            if "duration" in row:
-                row["duration"] = float(row["duration"])
-            result[data_id] = row
+                if data_id in result:
+                    raise ValueError(f"Duplicate id: {data_id}")
+                # Replacements:
+                for key, value in row.items():
+                    try:
+                        row[key] = variable_finder.sub(
+                            lambda match: str(replacements[match[1]]), value
+                        )
+                    except KeyError:
+                        raise KeyError(
+                            f"The item {value} requires replacements "
+                            "which were not supplied."
+                        )
+                # Duration:
+                if "duration" in row:
+                    row["duration"] = float(row["duration"])
+                result[data_id] = row
+                
+    else:                
+        with open(csv_path, newline="") as csvfile:
+            result = {}
+            reader = csv.DictReader(csvfile, skipinitialspace=True)
+            variable_finder = re.compile(r"\$([\w.]+)")
+            for row in reader:
+                # ID:
+                try:
+                    data_id = row["ID"]
+                    del row["ID"]  # This is used as a key in result, instead.
+                except KeyError:
+                    raise KeyError(
+                        "CSV has to have an 'ID' field, with unique ids"
+                        " for all data points"
+                    )
+                if data_id in result:
+                    raise ValueError(f"Duplicate id: {data_id}")
+                # Replacements:
+                for key, value in row.items():
+                    try:
+                        row[key] = variable_finder.sub(
+                            lambda match: str(replacements[match[1]]), value
+                        )
+                    except KeyError:
+                        raise KeyError(
+                            f"The item {value} requires replacements "
+                            "which were not supplied."
+                        )
+                # Duration:
+                if "duration" in row:
+                    row["duration"] = float(row["duration"])
+                result[data_id] = row
+                
     return result
 
 
-def read_audio(waveforms_obj):
+def read_audio(waveforms_obj, return_info=False):
     """General audio loading, based on a custom notation.
 
     Expected use case is in conjunction with Datasets
@@ -197,8 +239,24 @@ def read_audio(waveforms_obj):
     True
     """
     if isinstance(waveforms_obj, str):
-        audio, _ = torchaudio.load(waveforms_obj)
-        return audio.transpose(0, 1).squeeze(1)
+        s3_prefix = 's3://'
+        len_s3_prefix = len(s3_prefix)
+        if waveforms_obj[:len_s3_prefix] != s3_prefix:
+            audio, fs = torchaudio.load(waveforms_obj)
+        else:
+            bucket_name = waveforms_obj[len_s3_prefix:].split(os.sep)[0]
+            len_bucket_name = len(bucket_name)
+            s3_path = waveforms_obj[len_s3_prefix+len_bucket_name+len(os.sep):]
+            ext = os.path.splitext(s3_path)[1]
+            s3_client = boto3.client('s3')
+            response = s3_client.get_object(Bucket=bucket_name, Key=s3_path)
+            audio, fs = torchaudio.load(response['Body'], format=ext[1:])
+        nchannels = audio.shape[0]
+        info = {'sample_rate': fs, 'num_channels': nchannels}
+        if return_info:
+            return audio.transpose(0, 1).squeeze(1), info
+        else:
+            return audio.transpose(0, 1).squeeze(1)
 
     path = waveforms_obj["file"]
     start = waveforms_obj.get("start", 0)
@@ -207,8 +265,12 @@ def read_audio(waveforms_obj):
     stop = waveforms_obj.get("stop", start)
     num_frames = stop - start
     audio, fs = torchaudio.load(path, num_frames=num_frames, frame_offset=start)
-    audio = audio.transpose(0, 1)
-    return audio.squeeze(1)
+    nchannels = audio.shape[0]
+    info = {'sample_rate': fs, 'num_channels': nchannels}
+    if return_info:
+        return audio.transpose(0, 1).squeeze(1), info
+    else:
+        return audio.transpose(0, 1).squeeze(1)
 
 
 def read_audio_multichannel(waveforms_obj):
