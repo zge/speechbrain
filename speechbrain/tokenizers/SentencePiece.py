@@ -9,6 +9,7 @@ import torch
 import logging
 import csv
 import json
+import boto3
 import sentencepiece as spm
 from speechbrain.dataio.dataio import merge_char
 from speechbrain.utils import edit_distance
@@ -133,6 +134,19 @@ class SentencePiece:
         self.annotation_train = annotation_train
         self.annotation_read = annotation_read
         self.annotation_format = annotation_format
+
+        s3_prefix = 's3://'
+        len_s3_prefix = len(s3_prefix)
+        if self.annotation_train[:5] == s3_prefix:
+            bucket_name = self.annotation_train[len_s3_prefix:].split(os.sep)[0]
+            len_bucket_name = len(bucket_name)
+            s3_path = self.annotation_train[len_s3_prefix+len_bucket_name+len(os.sep):]
+            local_path = 'tmp/{}'.format(s3_path)
+            local_dir = os.path.dirname(local_path)
+            os.makedirs(local_dir, exist_ok=True)
+            s3_client = boto3.client('s3')
+            s3_client.download_file(bucket_name, s3_path, local_path)
+            self.annotation_train = local_path
 
         if self.annotation_train is not None:
             ext = os.path.splitext(self.annotation_train)[1]

@@ -21,6 +21,7 @@ import torchaudio
 import json
 import re
 import boto3
+from smart_open import smart_open
 from speechbrain.utils.torch_audio_backend import check_torchaudio_backend
 
 check_torchaudio_backend()

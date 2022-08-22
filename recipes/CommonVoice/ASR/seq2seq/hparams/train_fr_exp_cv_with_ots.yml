@@ -17,8 +17,8 @@ save_folder: results/cv_with_ots_fr_seq2seq_ctc_attention_now2v_nosmooth/save
 train_log: results/cv_with_ots_fr_seq2seq_ctc_attention_now2v_nosmooth/train_log.txt
 
 # Data files
-data_folder: data
-# data_folder: s3://zge-exp/data/tiny
+# data_folder: data
+data_folder: s3://zge-exp/data/tiny
 accented_letters: true
 language: fr # use 'it' for Italian, 'rw' for Kinyarwanda, 'en' for english
 # train_csv: ../../templates/speech_recognition/filelists/cv_with_ots/old/train_tiny.csv
